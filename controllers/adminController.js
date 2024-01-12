@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Admin = require("../model/Admin");
 const User = require("../model/User");
 const Carousel = require("../model/Carousel");
+const Gallery = require("../model/Gallery");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const adminLogin = async (req, res) => {
     try {
@@ -108,10 +109,10 @@ const getAllUsers = async (req, res) => {
 };
 const addCarouselImage = async (req, res) => {
     const { href,name } = req.body;
-    const { image } = req.file;
+    const image  = req.file;
     try {
         const newCarousel = await Carousel.create({
-            image: image,
+            image:`${proccess.env.DOMAIN}/carouselImage/${image.filename}`,
             href:href,
             name:name
         })
@@ -131,6 +132,52 @@ const getCarousel = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const deleteCarousel = async(req,res)=>{
+    const {id} = req.body;
+    try {
+        const carousel = await Carousel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Image deleted successfully" });
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const addGalleryImage = async (req, res) => {
+    try {
+        const image  = req.file;
+        const {href,name,description} = req.body;
+        const newGallery = await Gallery.create({
+            image:`${proccess.env.DOMAIN}/galleryImage/${image.filename}`,
+            href:href,
+            name:name,
+            description:description
+        })
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" }); 
+    }
+}
+const getGallery = async(req,res)=>{
+    try {
+        const gallery = await Gallery.find({});
+        res.status(200).json(gallery);
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteGallery = async(req,res)=>{
+    const {id} = req.body;
+    try {
+        const gallery = await Gallery.findByIdAndDelete(id);
+        res.status(200).json({ message: "Image deleted successfully" });
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports={
     adminLogin,
     adminRegister,
@@ -138,5 +185,9 @@ module.exports={
     getUser,
     getAllUsers,
     addCarouselImage,
-
+    getCarousel,
+    deleteCarousel,
+    addGalleryImage,
+    getGallery,
+    deleteGallery
 }
