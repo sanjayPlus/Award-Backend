@@ -4,7 +4,7 @@ const app = express();
 const userRoutes = require('./routes/userRoutes');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/award').then((res) => {
+mongoose.connect(process.env.MONGODB_URI).then((res) => {
     console.log('connected to database');
 }).catch((err) => {
     console.log(err);
