@@ -122,6 +122,15 @@ const addCarouselImage = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const getCarousel = async(req,res)=>{
+    try {
+        const carousel = await Carousel.find({});
+        res.status(200).json(carousel);
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports={
     adminLogin,
     adminRegister,
