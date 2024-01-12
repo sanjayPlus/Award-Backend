@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { sendMail } = require('../helpers/emailHelper');
 const register = async (req, res) => {
     try {
+        
         const { name,
             email,
             password,
