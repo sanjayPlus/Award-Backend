@@ -97,11 +97,37 @@ const deleteUser = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const updateUser = async (req, res) => {
+        try {
+            const { name,
+                password,
+                address,
+                phone,
+                aadhaar,
+                blood_group,
+            } = req.body;
+            const user = await User.findById(req.user.userId);
+            if(!user) return res.status(400).json({ message: "User not found" });
+
+            if(name) user.name = name;
+            if(password) user.password = password;
+            if(address) user.address = address;
+            if(phone) user.phone = phone;
+            if(aadhaar) user.aadhaar = aadhaar;
+            if(blood_group) user.blood_group = blood_group;
+            await user.save();
+            res.status(200).json({ message: "User updated successfully" });
+        } catch (error) {
+            console.error("Error registering user:", error.message);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+}
 
 module.exports ={
     register,
     login,
     protected,
     details,
-    deleteUser
+    deleteUser,
+    updateUser
 }
