@@ -196,6 +196,29 @@ const forgotPassword = async (req,res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const verifyForgotPassword = async (req,res) => {
+    try {
+        const {email, otp } = req.body;
+        if (!email || !otp) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+        const foundUser = await User.findOne({ otp:otp,email:email });
+        if (!foundUser) {
+            return res.status(401).json({ message: "Invalid OTP" });
+        }
+        if (foundUser.otpExpiry < Date.now()) {
+            return res.status(401).json({ message: "OTP expired" });
+        }
+        foundUser.isVerified = true;
+        foundUser.forgotOTP = undefined;
+        foundUser.forgotOTPExpiry = undefined;
+        await foundUser.save();
+        res.status(200).json({ message: "OTP verified successfully" });
+    } catch (error) {
+        console.error("Error registering user:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 
 module.exports ={
     register,
@@ -206,5 +229,6 @@ module.exports ={
     updateUser,
     sentOTP,
     verifyOTP,
-    forgotPassword
+    forgotPassword,
+    verifyForgotPassword
 }
