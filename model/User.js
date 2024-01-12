@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema({
     blood_group:{
         type: String,
     },
+    otp:{
+        type: String, 
+    },
+    otpExpiry: Date,
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    forgotOTP:{
+        type: String, 
+    },
+    forgotOTPExpiry: Date,
     date: {
         type: Date,
         default: Date.now
