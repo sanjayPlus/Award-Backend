@@ -202,18 +202,18 @@ const verifyForgotPassword = async (req,res) => {
         if (!email || !otp) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const foundUser = await User.findOne({ otp:otp,email:email });
+        const foundUser = await User.findOne({ forgotOTP:otp,email:email });
         if (!foundUser) {
             return res.status(401).json({ message: "Invalid OTP" });
         }
-        if (foundUser.otpExpiry < Date.now()) {
+        if (foundUser.forgotOTPExpiry < Date.now()) {
             return res.status(401).json({ message: "OTP expired" });
         }
-        foundUser.isVerified = true;
         foundUser.forgotOTP = undefined;
         foundUser.forgotOTPExpiry = undefined;
         await foundUser.save();
-        res.status(200).json({ message: "OTP verified successfully" });
+        const token = jwt.sign({ userId: foundUser._id }, process.env.JWT_SECRET, { expiresIn: '360d' })
+        res.status(200).json({token:token});
     } catch (error) {
         console.error("Error registering user:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
