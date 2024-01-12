@@ -230,5 +230,5 @@ module.exports ={
     sentOTP,
     verifyOTP,
     forgotPassword,
-    
+    verifyForgotPassword
 }
