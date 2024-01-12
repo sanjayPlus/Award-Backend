@@ -184,23 +184,19 @@ const forgotPassword = async (req,res) => {
         if(!foundUser){
             return res.status(400).json({ message: "User not found" });
         }
-        if(foundUser.isVerified){
-            return res.status(400).json({ message: "User already verified" })
-        }
         const otp = Math.floor(100000 + Math.random() * 900000);
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-        foundUser.otp =  otp;
-        foundUser.otpExpiry = otpExpiry;
+        foundUser.forgotOTP =  otp;
+        foundUser.forgotOTPExpiry = otpExpiry;
         sendMail(email, `Your OTP is ${otp}`, "OTP Verification", `<h1>Your OTP is ${otp}</h1>`);
         await foundUser.save();
         res.status(200).json({ message: `OTP sent to ${email}` });
     } catch (error) {
         console.error("Error registering user:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
-        
     }
-
 }
+
 module.exports ={
     register,
     login,
