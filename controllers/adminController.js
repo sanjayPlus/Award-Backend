@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Admin = require("../model/Admin");
 const User = require("../model/User");
+const Carousel = require("../model/Carousel");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const adminLogin = async (req, res) => {
     try {
@@ -105,11 +106,28 @@ const getAllUsers = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
+const addCarouselImage = async (req, res) => {
+    const { href,name } = req.body;
+    const { image } = req.file;
+    try {
+        const newCarousel = await Carousel.create({
+            image: image,
+            href:href,
+            name:name
+        })
+        if (!newCarousel) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports={
     adminLogin,
     adminRegister,
     protected,
     getUser,
-    getAllUsers
+    getAllUsers,
+    addCarouselImage,
+
 }
