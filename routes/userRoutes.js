@@ -11,7 +11,6 @@ router.get('/details',userAuth, userController.details);
 router.post('/register',userController.register)
 router.post('/login',userController.login);
 router.post('/update-user',userAuth, userController.updateUser);
-
 router.delete('/delete-user',userAuth, userController.deleteUser);
 
 
