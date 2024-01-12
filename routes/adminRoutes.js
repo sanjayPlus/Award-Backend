@@ -32,5 +32,4 @@ router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
 router.post('/carosuel-image', carouselImage.single("image"), adminController.addCarouselImage);
 
-router.
 module.exports = router;
