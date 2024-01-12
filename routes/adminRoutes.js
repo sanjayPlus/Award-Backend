@@ -26,10 +26,10 @@ const carouselStorage = multer.diskStorage({
   });
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
+router.get('/carousel',adminController.getCarousel)
 router.get('/users',adminAuth, adminController.getAllUsers);
-
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
-router.post('/carosuel-image', carouselImage.single("image"), adminController.addCarouselImage);
+router.post('/carosuel', carouselImage.single("image"), adminController.addCarouselImage);
 
 module.exports = router;
