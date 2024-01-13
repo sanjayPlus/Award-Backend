@@ -103,6 +103,6 @@ router.post('/delete-gallery', adminController.deleteGallery);
 router.post('/add-ads',adsImage.single("image"), adminController.addAdsImage);
 router.post('/delete-ads', adminController.deleteAds);
 //offers
-router.post('/add-offer'offerImage.single("image"), adminController.addOfferImage);
+router.post('/add-offer',offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer', adminController.deleteOffer);
 module.exports = router;
