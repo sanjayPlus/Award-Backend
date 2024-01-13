@@ -63,13 +63,34 @@ const carouselStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
+  //offers
+  const offerStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // destination is used to specify the path of the directory in which the files have to be stored
+        cb(null, "./public/offerImage");
+      },
+      filename: function (req, file, cb) {
+        // It is the filename that is given to the saved file.
+        const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, `${uniqueSuffix}`);
+        console.log(`${uniqueSuffix}-${file.originalname}`);
+        // console.log(file);
+      },
+  })
+  const offerImage = multer({
+    storage: offerStorage,
+    limits: {
+      fileSize: 20 * 1024 * 1024, // 20MB in bytes
+    },
+  });
 
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
 router.get('/carousel',adminController.getCarousel)
 router.get('/gallery',adminController.getGallery);
-router.get('/ads',adminController.getads)
+router.get('/ads',adminController.getAds)
+router.get('/offers',adminController.getOffer)
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
@@ -81,5 +102,7 @@ router.post('/delete-gallery', adminController.deleteGallery);
 //ads
 router.post('/add-ads',adsImage.single("image"), adminController.addAdsImage);
 router.post('/delete-ads', adminController.deleteAds);
-
+//offers
+router.post('/add-offer'offerImage.single("image"), adminController.addOfferImage);
+router.post('/delete-offer', adminController.deleteOffer);
 module.exports = router;
