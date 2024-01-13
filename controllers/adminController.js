@@ -112,9 +112,10 @@ const getAllUsers = async (req, res) => {
 const addCarouselImage = async (req, res) => {
     const { href,name } = req.body;
     const image  = req.file;
+    console.log(image);
     try {
         const newCarousel = await Carousel.create({
-            image:`${proccess.env.DOMAIN}/carouselImage/${image.filename}`,
+            image:`${process.env.DOMAIN}/carouselImage/${image.filename}`,
             href:href,
             name:name
         })
@@ -138,6 +139,7 @@ const deleteCarousel = async(req,res)=>{
     const {id} = req.body;
     try {
         const carousel = await Carousel.findByIdAndDelete(id);
+        if (!carousel) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -150,11 +152,13 @@ const addGalleryImage = async (req, res) => {
         const image  = req.file;
         const {href,name,description} = req.body;
         const newGallery = await Gallery.create({
-            image:`${proccess.env.DOMAIN}/galleryImage/${image.filename}`,
+            image:`${process.env.DOMAIN}/galleryImage/${image.filename}`,
             href:href,
             name:name,
             description:description
         })
+        if (!newGallery) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
         res.status(500).json({ error: "Internal Server Error" }); 
@@ -174,6 +178,7 @@ const deleteGallery = async(req,res)=>{
     const {id} = req.body;
     try {
         const gallery = await Gallery.findByIdAndDelete(id);
+        if (!gallery) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -186,11 +191,13 @@ const addAdsImage = async (req, res) => {
         const image  = req.file;
         const {href,name,description} = req.body;
         const newAds = await Ads.create({
-            image:`${proccess.env.DOMAIN}/adsImage/${image.filename}`,
+            image:`${process.env.DOMAIN}/adsImage/${image.filename}`,
             href:href,
             name:name,
             description:description
         })
+        if (!newAds) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
         res.status(500).json({ error: "Internal Server Error" }); 
@@ -209,6 +216,7 @@ const deleteAds = async(req,res)=>{
     const {id} = req.body;
     try {
         const ads = await Ads.findByIdAndDelete(id);
+        if (!ads) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -220,12 +228,14 @@ const addOfferImage = async(req,res) =>{
     try{
         const image = req.file;
         const {href,name,description} = req.body;
-        const newOffer = await Ads.create({
-            image:`${proccess.env.DOMAIN}/adsImage/${image.filename}`,
+        const newOffer = await Offer.create({
+            image:`${process.env.DOMAIN}/adsImage/${image.filename}`,
             href:href,
             name:name,
             description
         })
+        if (!newOffer) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
     }catch (error){
         console.error( "Error adding Image:", error.message)
         res.status(500).json({ message:"Internal Server Error" })
@@ -245,6 +255,7 @@ const deleteOffer = async(req,res)=>{
     const {id} = req.body;
     try {
         const offer = await Offer.findByIdAndDelete(id);
+        if (!offer) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);

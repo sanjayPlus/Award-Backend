@@ -2,7 +2,7 @@ const router = require('express').Router();
 const adminAuth = require('../middleware/adminAuth');
 const adminController = require('../controllers/adminController');
 const multer = require("multer");
-
+const path = require("path");
 const carouselStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       // destination is used to specify the path of the directory in which the files have to be stored
@@ -11,8 +11,8 @@ const carouselStorage = multer.diskStorage({
     filename: function (req, file, cb) {
       // It is the filename that is given to the saved file.
       const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, `${uniqueSuffix}-${file.originalname}`);
-      console.log(`${uniqueSuffix}-${file.originalname}`);
+        const ext = path.extname(file.originalname);
+         cb(null, `${uniqueSuffix}${ext}`);
       // console.log(file);
     },
   });
@@ -24,6 +24,7 @@ const carouselStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
+  //gallery
   const galleryStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         // destination is used to specify the path of the directory in which the files have to be stored
@@ -32,8 +33,8 @@ const carouselStorage = multer.diskStorage({
       filename: function (req, file, cb) {
         // It is the filename that is given to the saved file.
         const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `${uniqueSuffix}`);
-        console.log(`${uniqueSuffix}-${file.originalname}`);
+        const ext = path.extname(file.originalname);
+         cb(null, `${uniqueSuffix}${ext}`);
         // console.log(file);
       },
   })
@@ -52,8 +53,8 @@ const carouselStorage = multer.diskStorage({
       filename: function (req, file, cb) {
         // It is the filename that is given to the saved file.
         const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `${uniqueSuffix}`);
-        console.log(`${uniqueSuffix}-${file.originalname}`);
+        const ext = path.extname(file.originalname);
+         cb(null, `${uniqueSuffix}${ext}`);
         // console.log(file);
       },
   })
@@ -72,8 +73,8 @@ const carouselStorage = multer.diskStorage({
       filename: function (req, file, cb) {
         // It is the filename that is given to the saved file.
         const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `${uniqueSuffix}`);
-        console.log(`${uniqueSuffix}-${file.originalname}`);
+        const ext = path.extname(file.originalname);
+         cb(null, `${uniqueSuffix}${ext}`);
         // console.log(file);
       },
   })
