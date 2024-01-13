@@ -24,7 +24,7 @@ const carouselStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
-  const gallerystorage = multer.diskStorage({
+  const galleryStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         // destination is used to specify the path of the directory in which the files have to be stored
         cb(null, "./public/galleryImage");
@@ -41,14 +41,35 @@ const carouselStorage = multer.diskStorage({
     storage: galleryStorage,
     limits: {
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
+   },
+  });
+ //adsgallery
+  const adsStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // destination is used to specify the path of the directory in which the files have to be stored
+        cb(null, "./public/adsImage");
+      },
+      filename: function (req, file, cb) {
+        // It is the filename that is given to the saved file.
+        const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, `${uniqueSuffix}`);
+        console.log(`${uniqueSuffix}-${file.originalname}`);
+        // console.log(file);
+      },
+  })
+  const adsImage = multer({
+    storage: adsStorage,
+    limits: {
+      fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
+
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
 router.get('/carousel',adminController.getCarousel)
 router.get('/gallery',adminController.getGallery);
-
+router.get('/ads',adminController.getads)
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
@@ -57,6 +78,8 @@ router.post('/delete-carousel', adminController.deleteCarousel);
 //gallery
 router.post('/gallery',galleryImage.single("image"), adminController.addGalleryImage);
 router.post('/delete-gallery', adminController.deleteGallery);
-
+//ads
+router.post('/add-ads',adsImage.single("image"), adminController.addAdsImage);
+router.post('/delete-ads', adminController.deleteAds);
 
 module.exports = router;

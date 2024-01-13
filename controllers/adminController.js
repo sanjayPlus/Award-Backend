@@ -4,6 +4,7 @@ const Admin = require("../model/Admin");
 const User = require("../model/User");
 const Carousel = require("../model/Carousel");
 const Gallery = require("../model/Gallery");
+const Ads = require("../model/Ads")
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const adminLogin = async (req, res) => {
     try {
@@ -178,6 +179,41 @@ const deleteGallery = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+//ads
+const addAdsImage = async (req, res) => {
+    try {
+        const image  = req.file;
+        const {href,name,description} = req.body;
+        const newAds = await Ads.create({
+            image:`${proccess.env.DOMAIN}/adsImage/${image.filename}`,
+            href:href,
+            name:name,
+            description:description
+        })
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" }); 
+    }
+}
+const getAds = async(req,res)=>{
+    try {
+        const ads = await Ads.find({});
+        res.status(200).json(ads);
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteAds = async(req,res)=>{
+    const {id} = req.body;
+    try {
+        const ads = await Ads.findByIdAndDelete(id);
+        res.status(200).json({ message: "Image deleted successfully" });
+    } catch (error) {
+        console.error("Error adding image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports={
     adminLogin,
     adminRegister,
@@ -189,5 +225,8 @@ module.exports={
     deleteCarousel,
     addGalleryImage,
     getGallery,
-    deleteGallery
+    deleteGallery,
+    addAdsImage,
+    getAds,
+    deleteAds
 }
