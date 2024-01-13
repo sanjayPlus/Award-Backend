@@ -24,7 +24,7 @@ const carouselStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
-  const gallerystorage = multer.diskStorage({
+  const galleryStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         // destination is used to specify the path of the directory in which the files have to be stored
         cb(null, "./public/galleryImage");
