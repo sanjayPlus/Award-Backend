@@ -95,15 +95,17 @@ router.get('/offers',adminController.getOffer)
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
-router.post('/carosuel', carouselImage.single("image"), adminController.addCarouselImage);
-router.post('/delete-carousel', adminController.deleteCarousel);
+router.post('/carosuel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
+router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
 //gallery
-router.post('/gallery',galleryImage.single("image"), adminController.addGalleryImage);
-router.post('/delete-gallery', adminController.deleteGallery);
+router.post('/gallery',adminAuth,galleryImage.single("image"), adminController.addGalleryImage);
+router.post('/delete-gallery',adminAuth, adminController.deleteGallery);
 //ads
-router.post('/add-ads',adsImage.single("image"), adminController.addAdsImage);
-router.post('/delete-ads', adminController.deleteAds);
+router.post('/add-ads',adminAuth,adsImage.single("image"), adminController.addAdsImage);
+router.post('/delete-ads',adminAuth, adminController.deleteAds);
 //offers
-router.post('/add-offer',offerImage.single("image"), adminController.addOfferImage);
-router.post('/delete-offer', adminController.deleteOffer);
+router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
+router.post('/delete-offer',adminAuth, adminController.deleteOffer);
+
+router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 module.exports = router;

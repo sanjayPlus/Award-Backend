@@ -136,6 +136,7 @@ router.get(
               name,
               email,
               phone: phoneNumber,
+              
             });
             user.payments.push({
               paymentId: payments._id,

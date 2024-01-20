@@ -14,9 +14,22 @@ const register = async (req, res) => {
             aadhaar,
             blood_group,
         } = req.body;
+        //field validation
         if(!name || !email || !password || !address || !phone || !aadhaar || !blood_group) {
             return res.status(400).json({ message: "All fields are required" })
         }
+        //email validation
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: "Invalid email format." });
+        }
+        //password validation
+        if (password.length < 6) {
+            return res
+              .status(400)
+              .json({ error: "Password must be at least 6 characters long." });
+          }
+        //check if user already exists
         const user = await User.findOne({ email })
         if (user) {
             return res.status(401).json({ message: "User already exists" })
@@ -224,57 +237,50 @@ const verifyForgotPassword = async (req,res) => {
     }
 }
 //fast search api
-const bloodDonation1 = async (req,res) => {
+const bloodDonation1 = async (req, res) => {
     try {
-        const{blood_group,district,place,name} = req.query;
-        if(!blood_group || !district ){
+        const { blood_group, district, place, name } = req.query;
+
+        if (!blood_group || !district) {
             return res.status(400).json({ message: "Blood group and district are required" });
-            
         }
-        if(name){
-            const foundUser = await User.findOne({ name,blood_group,district });
-            if(!foundUser){
-                return res.status(400).json({ message: "User not found" });
-            }
+
+        let query = { blood_group, district };
+
+        if (name) {
+            query.name = name;
+        } else if (place) {
+            query.place = place;
+        } else if (name && place) {
+            query = { name, place, blood_group, district };
         }
-        else if(place){
-            const foundUser = await User.findOne({ place,blood_group,district });
-            if(!foundUser){
-                return res.status(400).json({ message: "User not found" });
-            }
+
+        const foundUser = await User.findOne(query);
+
+        if (!foundUser) {
+            return res.status(400).json({ message: "User not found" });
         }
-        else if(name && place){
-            const foundUser = await User.findOne({ name,place,blood_group,district });
-            if(!foundUser){
-                return res.status(400).json({ message: "User not found" });
-            }
-        }
-        else{
-            const foundUser = await User.findOne({ blood_group,district });
-            if(!foundUser){
-                return res.status(400).json({ message: "User not found" });
-            }
-        }
-         // Extract only the specified fields
-         const filteredResponse = foundUser.map(({ blood_group, district, place, name }) => ({
-            blood_group,
-            district,
-            place,
-            name
-        }));
+
+        // Extract only the specified fields
+        const filteredResponse = {
+            blood_group: foundUser.blood_group,
+            district: foundUser.district,
+            place: foundUser.place,
+            name: foundUser.name
+        };
+
         res.status(200).json(filteredResponse);
-    }catch(error){
-        console.error("Error registering user:", error.message);
+    } catch (error) {
+        console.error("Error searching for user:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
-    
-}
+};
 //slow search api
 const bloodDonation2 = async (req, res) => {
     try {
         const { blood_group, district, place, name } = req.query;
         let filterData = await User.find({});
-
+        
         if (name) {
             filterData = filterData.filter((user) => user.name === name);
         }
@@ -287,7 +293,6 @@ const bloodDonation2 = async (req, res) => {
         if (district) {
             filterData = filterData.filter((user) => user.district === district);
         }
-
         // Extract only the specified fields
         const filteredResponse = filterData.map(({ blood_group, district, place, name }) => ({
             blood_group,
@@ -295,6 +300,7 @@ const bloodDonation2 = async (req, res) => {
             place,
             name
         }));
+        
 
         res.status(200).json(filteredResponse);
     } catch (error) {
