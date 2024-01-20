@@ -12,26 +12,26 @@ const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-        return res
-            .status(400)
-            .json({ error: "Please provide all required fields." });
+            return res
+                .status(400)
+                .json({ error: "Please provide all required fields." });
         }
         const user = await Admin.findOne({ email });
         if (!user) {
-        return res.status(400).json({ error: "Invalid credentials" });
+            return res.status(400).json({ error: "Invalid credentials" });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-        return res.status(400).json({ error: "Invalid credentials" });
+            return res.status(400).json({ error: "Invalid credentials" });
         }
         const payload = {
-        user: {
-            id: user._id,
-        },
+            user: {
+                id: user._id,
+            },
         };
         jwt.sign(payload, jwtSecret, { expiresIn: "1h" }, (err, token) => {
-        if (err) throw err;
-        res.status(200).json({ token });
+            if (err) throw err;
+            res.status(200).json({ token });
         });
     } catch (error) {
         console.error("Error logging in admin:", error.message);
@@ -43,28 +43,28 @@ const adminRegister = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-        return res
-            .status(400)
-            .json({ error: "Please provide all required fields." });
+            return res
+                .status(400)
+                .json({ error: "Please provide all required fields." });
         }
         const user = await Admin.findOne({ email });
         if (user) {
-        return res.status(400).json({ error: "User already exists" });
+            return res.status(400).json({ error: "User already exists" });
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const newUser = await Admin.create({
-        email,
-        password: hashedPassword,
+            email,
+            password: hashedPassword,
         });
         const payload = {
-        user: {
-            id: newUser._id,
-        },
+            user: {
+                id: newUser._id,
+            },
         };
         jwt.sign(payload, jwtSecret, { expiresIn: "3h" }, (err, token) => {
-        if (err) throw err;
-        res.status(200).json({ token });
+            if (err) throw err;
+            res.status(200).json({ token });
         });
     } catch (error) {
         console.error("Error registering admin:", error.message);
@@ -75,19 +75,21 @@ const adminRegister = async (req, res) => {
 const protected = async (req, res) => {
     try {
         if (req.user) {
-          res.status(200).json({ message: "You are authorized" });
+            res.status(200).json({ message: "You are authorized" });
         } else {
-          res.status(401).json({ message: "You are not authorized" });
+            res.status(401).json({ message: "You are not authorized" });
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error during login:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
-      }
+    }
 }
 const getUser = async (req, res) => {
-    const { id } = req.params.id;
+    const { id } = req.params;
     try {
         const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
         res.status(200).json(user);
     } catch (error) {
         console.error("Error getting user:", error.message);
@@ -97,27 +99,55 @@ const getUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const { page = 1, perPage = 10 } = req.query;
+        const { page, perPage, search } = req.query;
         const skip = (page - 1) * perPage;
+        const searchQuery = req.query.search; // Assuming you're using Express and 'search' is a query parameter
 
-        const users = await User.find({})
-            .skip(skip)
-            .limit(Number(perPage));
+        let users = [];
+        if (search !== "") {
+            const searchRegex = new RegExp(searchQuery, 'i'); // 'i' flag for case-insensitive search
 
-        res.status(200).json(users);
+            // Use $regex operator for searching
+            users = await User.find({ name: { $regex: searchRegex } })
+                .skip(skip)
+                .limit(Number(perPage));
+        } else {
+            users = await User.find({})
+                .skip(skip)
+                .limit(Number(perPage));
+        }
+
+        res.status(200).json({
+            data: users,
+            currentPage: page,
+            totalPages: Math.ceil(await User.countDocuments() / perPage),
+        });
     } catch (error) {
         console.error("Error getting all users:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await User.findByIdAndDelete(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ message: "User deleted successfully" });
+    }catch(error){
+        console.error("Error deleting user:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 const addCarouselImage = async (req, res) => {
-    const { href,name } = req.body;
-    const image  = req.file;
+    const { href, name } = req.body;
+    const image = req.file;
+    console.log(image);
     try {
         const newCarousel = await Carousel.create({
-            image:`${proccess.env.DOMAIN}/carouselImage/${image.filename}`,
-            href:href,
-            name:name
+            image: `${process.env.DOMAIN}/carouselImage/${image.filename}`,
+            href: href,
+            name: name
         })
         if (!newCarousel) return res.status(400).json({ message: "Image not added" });
         res.status(200).json({ message: "Image added successfully" });
@@ -126,7 +156,7 @@ const addCarouselImage = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const getCarousel = async(req,res)=>{
+const getCarousel = async (req, res) => {
     try {
         const carousel = await Carousel.find({});
         res.status(200).json(carousel);
@@ -135,10 +165,11 @@ const getCarousel = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const deleteCarousel = async(req,res)=>{
-    const {id} = req.body;
+const deleteCarousel = async (req, res) => {
+    const { id } = req.body;
     try {
         const carousel = await Carousel.findByIdAndDelete(id);
+        if (!carousel) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -148,20 +179,22 @@ const deleteCarousel = async(req,res)=>{
 
 const addGalleryImage = async (req, res) => {
     try {
-        const image  = req.file;
-        const {href,name,description} = req.body;
+        const image = req.file;
+        const { href, name, description } = req.body;
         const newGallery = await Gallery.create({
-            image:`${proccess.env.DOMAIN}/galleryImage/${image.filename}`,
-            href:href,
-            name:name,
-            description:description
+            image: `${process.env.DOMAIN}/galleryImage/${image.filename}`,
+            href: href,
+            name: name,
+            description: description
         })
+        if (!newGallery) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
-        res.status(500).json({ error: "Internal Server Error" }); 
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const getGallery = async(req,res)=>{
+const getGallery = async (req, res) => {
     try {
         const gallery = await Gallery.find({});
         res.status(200).json(gallery);
@@ -171,10 +204,11 @@ const getGallery = async(req,res)=>{
     }
 }
 
-const deleteGallery = async(req,res)=>{
-    const {id} = req.body;
+const deleteGallery = async (req, res) => {
+    const { id } = req.body;
     try {
         const gallery = await Gallery.findByIdAndDelete(id);
+        if (!gallery) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -184,19 +218,22 @@ const deleteGallery = async(req,res)=>{
 //ads
 const addAdsImage = async (req, res) => {
     try {
-        const image  = req.file;
-        const {href,name,description} = req.body;
+        const image = req.file;
+        const { href, name, description } = req.body;
         const newAds = await Ads.create({
-            image:`${proccess.env.DOMAIN}/adsImage/${image.filename}`,
-            href:href,
-            name:name,
-            description:description
+            image: `${process.env.DOMAIN}/adsImage/${image.filename}`,
+            href: href,
+            name: name,
+            description: description
         })
+        if (!newAds) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
-        res.status(500).json({ error: "Internal Server Error" }); 
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }
+
 
 const getAds = async(req,res)=>{
     try {
@@ -207,10 +244,11 @@ const getAds = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const deleteAds = async(req,res)=>{
-    const {id} = req.body;
+const deleteAds = async (req, res) => {
+    const { id } = req.body;
     try {
         const ads = await Ads.findByIdAndDelete(id);
+        if (!ads) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -218,23 +256,25 @@ const deleteAds = async(req,res)=>{
     }
 }
 //offers
-const addOfferImage = async(req,res) =>{
-    try{
+const addOfferImage = async (req, res) => {
+    try {
         const image = req.file;
-        const {href,name,description} = req.body;
-        const newOffer = await Ads.create({
-            image:`${proccess.env.DOMAIN}/adsImage/${image.filename}`,
-            href:href,
-            name:name,
+        const { href, name, description } = req.body;
+        const newOffer = await Offer.create({
+            image: `${process.env.DOMAIN}/adsImage/${image.filename}`,
+            href: href,
+            name: name,
             description
         })
-    }catch (error){
-        console.error( "Error adding Image:", error.message)
-        res.status(500).json({ message:"Internal Server Error" })
+        if (!newOffer) return res.status(400).json({ message: "Image not added" });
+        res.status(200).json({ message: "Image added successfully" });
+    } catch (error) {
+        console.error("Error adding Image:", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
 
     }
 }
-const getOffer = async(req,res)=>{
+const getOffer = async (req, res) => {
     try {
         const offer = await Offer.find({});
         res.status(200).json(offer);
@@ -243,22 +283,24 @@ const getOffer = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const deleteOffer = async(req,res)=>{
-    const {id} = req.body;
+const deleteOffer = async (req, res) => {
+    const { id } = req.body;
     try {
         const offer = await Offer.findByIdAndDelete(id);
+        if (!offer) return res.status(400).json({ message: "Image not deleted" });
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-module.exports={
+module.exports = {
     adminLogin,
     adminRegister,
     protected,
     getUser,
     getAllUsers,
+    deleteUser,
     addCarouselImage,
     getCarousel,
     deleteCarousel,

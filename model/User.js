@@ -44,7 +44,13 @@ const userSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    place : {
+        type: String,
+    },
+    district : {
+        type: String,
+    },
 })
 
 const User = mongoose.model('User', userSchema);

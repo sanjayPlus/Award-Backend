@@ -16,13 +16,13 @@ mongoose.connect(process.env.MONGODB_URI).then((res) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors());
 app.use("/api/user",userRoutes);
 app.use("/api/admin",adminRoutes);
 
 app.get("/", (req, res) => {
     res.send('hello world');
 })
-app.listen(3000, () => {
-    console.log('listening on port 3000');
+app.listen(3001, () => {
+    console.log('listening on port 3001');
 })

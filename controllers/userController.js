@@ -15,9 +15,22 @@ const register = async (req, res) => {
             aadhaar,
             blood_group,
         } = req.body;
+        //field validation
         if(!name || !email || !password || !address || !phone || !aadhaar || !blood_group) {
             return res.status(400).json({ message: "All fields are required" })
         }
+        //email validation
+        const emailRegex = /^\S+@\S+\.\S+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: "Invalid email format." });
+        }
+        //password validation
+        if (password.length < 6) {
+            return res
+              .status(400)
+              .json({ error: "Password must be at least 6 characters long." });
+          }
+        //check if user already exists
         const user = await User.findOne({ email })
         if (user) {
             return res.status(401).json({ message: "User already exists" })
@@ -108,6 +121,8 @@ const updateUser = async (req, res) => {
                 phone,
                 aadhaar,
                 blood_group,
+                place,
+                district,
             } = req.body;
             const user = await User.findById(req.user.userId);
             if(!user) return res.status(400).json({ message: "User not found" });
@@ -118,6 +133,8 @@ const updateUser = async (req, res) => {
             if(phone) user.phone = phone;
             if(aadhaar) user.aadhaar = aadhaar;
             if(blood_group) user.blood_group = blood_group;
+            if(place) user.place = place;
+            if(district) user.district = district;
             await user.save();
             res.status(200).json({ message: "User updated successfully" });
         } catch (error) {
@@ -220,6 +237,7 @@ const verifyForgotPassword = async (req,res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+<<<<<<< HEAD
 //googlelogin
 const googleLogin = async (req, res) => {
   try {
@@ -247,6 +265,81 @@ console.log(tokenNew)
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+=======
+//fast search api
+const bloodDonation1 = async (req, res) => {
+    try {
+        const { blood_group, district, place, name } = req.query;
+
+        if (!blood_group || !district) {
+            return res.status(400).json({ message: "Blood group and district are required" });
+        }
+
+        let query = { blood_group, district };
+
+        if (name) {
+            query.name = name;
+        } else if (place) {
+            query.place = place;
+        } else if (name && place) {
+            query = { name, place, blood_group, district };
+        }
+
+        const foundUser = await User.findOne(query);
+
+        if (!foundUser) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        // Extract only the specified fields
+        const filteredResponse = {
+            blood_group: foundUser.blood_group,
+            district: foundUser.district,
+            place: foundUser.place,
+            name: foundUser.name
+        };
+
+        res.status(200).json(filteredResponse);
+    } catch (error) {
+        console.error("Error searching for user:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+//slow search api
+const bloodDonation2 = async (req, res) => {
+    try {
+        const { blood_group, district, place, name } = req.query;
+        let filterData = await User.find({});
+        
+        if (name) {
+            filterData = filterData.filter((user) => user.name === name);
+        }
+        if (place) {
+            filterData = filterData.filter((user) => user.place === place);
+        }
+        if (blood_group) {
+            filterData = filterData.filter((user) => user.blood_group === blood_group);
+        }
+        if (district) {
+            filterData = filterData.filter((user) => user.district === district);
+        }
+        // Extract only the specified fields
+        const filteredResponse = filterData.map(({ blood_group, district, place, name }) => ({
+            blood_group,
+            district,
+            place,
+            name
+        }));
+        
+
+        res.status(200).json(filteredResponse);
+    } catch (error) {
+        console.error("Error retrieving user:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
 
 module.exports ={
     register,
@@ -259,5 +352,7 @@ module.exports ={
     verifyOTP,
     forgotPassword,
     verifyForgotPassword,
-    googleLogin
+    googleLogin,
+    bloodDonation1,
+    bloodDonation2
 }
