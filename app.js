@@ -4,12 +4,16 @@ const app = express();
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 mongoose.connect(process.env.MONGODB_URI).then((res) => {
     console.log('connected to database');
 }).catch((err) => {
     console.log(err);
 })
+
+//middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -6,6 +6,7 @@ const Carousel = require("../model/Carousel");
 const Gallery = require("../model/Gallery");
 const Ads = require("../model/Ads")
 const Offer = require("../model/Offer")
+const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const adminLogin = async (req, res) => {
     try {
@@ -196,6 +197,7 @@ const addAdsImage = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" }); 
     }
 }
+
 const getAds = async(req,res)=>{
     try {
         const ads = await Ads.find({});

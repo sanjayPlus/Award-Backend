@@ -2,6 +2,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../model/User');
 const jwt = require('jsonwebtoken');
+const serviceAccount = require("../firebase/firebase");
 const { sendMail } = require('../helpers/emailHelper');
 const register = async (req, res) => {
     try {
@@ -219,6 +220,33 @@ const verifyForgotPassword = async (req,res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+//googlelogin
+const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+  console.log(token,"google")
+    if (!token) {
+      return res.status(400).json({ error: "ID token not provided." });
+    }
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
+    const authUser = decodedToken;
+    const user = await User.findOne({ email: authUser.email });
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const tokenNew = jwt.sign({ userId: user._id }, jwtSecret, {
+      expiresIn: "36500d",
+    });
+console.log(tokenNew)
+    res
+      .status(200)
+      .json({ token: tokenNew, user: { id: user._id, name: user.name } });
+  } catch (error) {
+    console.error("Error during ID card generation:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports ={
     register,
@@ -230,5 +258,6 @@ module.exports ={
     sentOTP,
     verifyOTP,
     forgotPassword,
-    verifyForgotPassword
+    verifyForgotPassword,
+    googleLogin
 }
