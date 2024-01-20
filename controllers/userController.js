@@ -237,7 +237,7 @@ const verifyForgotPassword = async (req,res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-<<<<<<< HEAD
+
 //googlelogin
 const googleLogin = async (req, res) => {
   try {
@@ -265,7 +265,7 @@ console.log(tokenNew)
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-=======
+
 //fast search api
 const bloodDonation1 = async (req, res) => {
     try {
