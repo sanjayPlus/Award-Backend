@@ -261,7 +261,7 @@ const addOfferImage = async (req, res) => {
         const image = req.file;
         const { href, name, description } = req.body;
         const newOffer = await Offer.create({
-            image: `${process.env.DOMAIN}/adsImage/${image.filename}`,
+            image: `${process.env.DOMAIN}/offerImage/${image.filename}`,
             href: href,
             name: name,
             description
