@@ -160,7 +160,23 @@ const sentOTP = async (req, res) => {
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
         foundUser.otp = otp;
         foundUser.otpExpiry = otpExpiry;
-        sendMail(email, `Your OTP is ${otp}`, "OTP Verification", `<h1>Your OTP is ${otp}</h1>`);
+        sendMail(email, `Your OTP is ${otp}`, "OTP Verification",
+         `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+  <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Award Kuda</a>
+    </div>
+    <p style="font-size:1.1em">Hi ${foundUser.name},</p>
+    <p>Thank you for choosing <b>AWARD KUDA APP</b>. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
+    <h2 style="background: forestgreen;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+    <p style="font-size:0.9em;">Regards,<br /><b>Avard Kuda</b></p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+      <p>Avard</p>
+      
+    </div>
+  </div>
+</div>`);
         await foundUser.save();
         res.status(200).json({ message: `OTP sent to ${email}` });
     }catch (error) {
@@ -206,7 +222,24 @@ const forgotPassword = async (req,res) => {
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
         foundUser.forgotOTP =  otp;
         foundUser.forgotOTPExpiry = otpExpiry;
-        sendMail(email, `Your OTP is ${otp}`, "OTP Verification", `<h1>Your OTP is ${otp}</h1>`);
+        sendMail(email, `Your OTP is ${otp}`, "OTP Verification",
+         `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+  <div style="margin:50px auto;width:70%;padding:20px 0">
+    <div style="border-bottom:1px solid #eee">
+      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Award Kuda</a>
+    </div>
+    <p style="font-size:1.1em">Hi ${foundUser.name},</p>
+    <p>We have received a request to reset your password. Use the following OTP to reset your password. OTP is valid for 20 minutes</p>
+    <h2 style="background: forestgreen;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+    <p style="font-size:0.9em;">Regards,<br /><b>Avard Kuda</b></p>
+    <hr style="border:none;border-top:1px solid #eee" />
+    <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+      <p>Avard</p>
+ 
+    </div>
+  </div>
+</div>`
+         );
         await foundUser.save();
         res.status(200).json({ message: `OTP sent to ${email}` });
     } catch (error) {
