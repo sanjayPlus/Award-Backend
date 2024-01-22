@@ -95,6 +95,7 @@ router.get('/offers',adminController.getOffer);
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
+//carousel
 router.post('/carosuel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
 router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
 //gallery

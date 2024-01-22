@@ -318,19 +318,19 @@ const bloodDonation1 = async (req, res) => {
             query = { name, place, blood_group, district };
         }
 
-        const foundUser = await User.findOne(query);
+        const foundUser = await User.find(query);
 
         if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
 
         // Extract only the specified fields
-        const filteredResponse = {
-            blood_group: foundUser.blood_group,
-            district: foundUser.district,
-            place: foundUser.place,
-            name: foundUser.name
-        };
+        const filteredResponse = foundUser.map(user => ({
+            blood_group: user.blood_group,
+            district: user.district,
+            place: user.place,
+            name: user.name
+        }));
 
         res.status(200).json(filteredResponse);
     } catch (error) {
