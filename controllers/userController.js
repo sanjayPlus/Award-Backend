@@ -57,13 +57,13 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" })
         }
         const foundUser = await User.findOne({ email })
         if (!foundUser) {
-            return res.status(401).json({ message: "User not found" })
+            return res.status(404).json({ message: "User not found" })
         }
         const isMatch = await bcrypt.compare(password, foundUser.password)
         if (!isMatch) {
@@ -164,10 +164,10 @@ const sentOTP = async (req, res) => {
          `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
   <div style="margin:50px auto;width:70%;padding:20px 0">
     <div style="border-bottom:1px solid #eee">
-      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Award Kuda</a>
+      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Avard Kuda</a>
     </div>
     <p style="font-size:1.1em">Hi ${foundUser.name},</p>
-    <p>Thank you for choosing <b>AWARD KUDA APP</b>. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
+    <p>Thank you for choosing <b>AVARD KUDA APP</b>. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
     <h2 style="background: forestgreen;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
     <p style="font-size:0.9em;">Regards,<br /><b>Avard Kuda</b></p>
     <hr style="border:none;border-top:1px solid #eee" />
@@ -226,7 +226,7 @@ const forgotPassword = async (req,res) => {
          `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
   <div style="margin:50px auto;width:70%;padding:20px 0">
     <div style="border-bottom:1px solid #eee">
-      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Award Kuda</a>
+      <a href="" style="font-size:1.4em;color: forestgreen;text-decoration:none;font-weight:600">Avard Kuda</a>
     </div>
     <p style="font-size:1.1em">Hi ${foundUser.name},</p>
     <p>We have received a request to reset your password. Use the following OTP to reset your password. OTP is valid for 20 minutes</p>
@@ -284,7 +284,7 @@ const googleLogin = async (req, res) => {
     const authUser = decodedToken;
     const user = await User.findOne({ email: authUser.email });
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     const tokenNew = jwt.sign({ userId: user._id }, jwtSecret, {
       expiresIn: "36500d",
@@ -321,7 +321,7 @@ const bloodDonation1 = async (req, res) => {
         const foundUser = await User.findOne(query);
 
         if (!foundUser) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         // Extract only the specified fields
