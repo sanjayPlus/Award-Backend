@@ -128,7 +128,7 @@ router.post('/add-ads',adminAuth,adsImage.single("image"), adminController.addAd
 router.post('/delete-ads',adminAuth, adminController.deleteAds);
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
-router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
+///router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 
