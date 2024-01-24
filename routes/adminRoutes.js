@@ -109,11 +109,14 @@ const OneImage = multer({
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
-router.get('/carousel',adminController.getCarousel)
+router.get('/carousel',adminController.getCarousel);
 router.get('/gallery',adminController.getGallery);
 router.get('/ads',adminController.getAds);
 router.get('/offers',adminController.getOffer);
-router.get('/notification',adminController.getnotification);
+// <<<<<<< HEAD
+// router.get('/notification',adminController.getnotification);
+// =======
+// >>>>>>> 33d01de4552b21dac29a298835b718dacf4d8756
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
