@@ -51,6 +51,13 @@ const userSchema = new mongoose.Schema({
     district : {
         type: String,
     },
+    payments:[{
+    paymentId:String,
+    amount:Number,
+    date:String,
+    merchantId:String,
+    merchantTransactionId:String,
+  }]
 })
 
 const User = mongoose.model('User', userSchema);

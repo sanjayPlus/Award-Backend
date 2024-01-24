@@ -113,14 +113,12 @@ router.get('/carousel',adminController.getCarousel);
 router.get('/gallery',adminController.getGallery);
 router.get('/ads',adminController.getAds);
 router.get('/offers',adminController.getOffer);
-// <<<<<<< HEAD
+
 // router.get('/notification',adminController.getnotification);
-// =======
-// >>>>>>> 33d01de4552b21dac29a298835b718dacf4d8756
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
-router.post('/carosuel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
+router.post('/carousel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
 router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
 router.post('/gallery',adminAuth,galleryImage.single("image"), adminController.addGalleryImage);
 router.post('/delete-gallery',adminAuth, adminController.deleteGallery);
@@ -128,7 +126,7 @@ router.post('/add-ads',adminAuth,adsImage.single("image"), adminController.addAd
 router.post('/delete-ads',adminAuth, adminController.deleteAds);
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
-///router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
+//router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 

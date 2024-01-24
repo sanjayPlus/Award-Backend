@@ -10,6 +10,8 @@ const Notification = require("../model/Notification");
 const NotificationList = require("../model/NotificationList");
 const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
+const Cache = require('../helpers/Cache');
+const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -144,7 +146,6 @@ const deleteUser = async (req, res) => {
 const addCarouselImage = async (req, res) => {
     const { href, name } = req.body;
     const image = req.file;
-    console.log(image);
     try {
         const newCarousel = await Carousel.create({
             image: `${process.env.DOMAIN}/carouselImage/${image.filename}`,
@@ -152,15 +153,22 @@ const addCarouselImage = async (req, res) => {
             name: name
         })
         if (!newCarousel) return res.status(400).json({ message: "Image not added" });
+        const  cacheData = await Carousel.find({}).sort({_id:-1});
+        Cache.set("carousel", cacheData,cacheTime);
         res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Internal Server Error"});
     }
 }
 const getCarousel = async (req, res) => {
     try {
-        const carousel = await Carousel.find({});
+         const cachedData = Cache.get("carousel");
+       if (cachedData) {
+       return res.status(200).json(cachedData);
+       }
+        const carousel = await Carousel.find({}).sort({_id:-1});
+          Cache.set("carousel", carousel ,cacheTime);
         res.status(200).json(carousel);
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -172,6 +180,8 @@ const deleteCarousel = async (req, res) => {
     try {
         const carousel = await Carousel.findByIdAndDelete(id);
         if (!carousel) return res.status(400).json({ message: "Image not deleted" });
+        const  cacheData =  await Carousel.find({}).sort({_id:-1});
+        Cache.set("carousel", carousel ,cacheTime);
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
