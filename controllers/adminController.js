@@ -6,6 +6,8 @@ const Carousel = require("../model/Carousel");
 const Gallery = require("../model/Gallery");
 const Ads = require("../model/Ads")
 const Offer = require("../model/Offer")
+const Notification = require("../model/Notification")
+const NotificationList = require("../model/NotificationList")
 const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const adminLogin = async (req, res) => {
