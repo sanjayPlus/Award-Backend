@@ -84,29 +84,48 @@ const carouselStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
+//OneImage
+const OneStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/OneImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
 
+// Configure storage engine instead of dest object.
+const OneImage = multer({
+  storage: OneStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
 router.get('/carousel',adminController.getCarousel)
 router.get('/gallery',adminController.getGallery);
-router.get('/ads',adminController.getAds)
-router.get('/offers',adminController.getOffer)
+router.get('/ads',adminController.getAds);
+router.get('/offers',adminController.getOffer);
+router.get('/notification',adminController.getnotification);
 
 router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
-//carousel
 router.post('/carosuel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
 router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
-//gallery
 router.post('/gallery',adminAuth,galleryImage.single("image"), adminController.addGalleryImage);
 router.post('/delete-gallery',adminAuth, adminController.deleteGallery);
-//ads
 router.post('/add-ads',adminAuth,adsImage.single("image"), adminController.addAdsImage);
 router.post('/delete-ads',adminAuth, adminController.deleteAds);
-//offers
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
+router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 

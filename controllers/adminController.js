@@ -294,6 +294,66 @@ const deleteOffer = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+async function sentNoficationToAllUsers() {
+    try {
+        const { title , url } = req.body;
+        const imageobj = req.file;
+
+        // Retrive all tokens from the notification model
+        const tokens = await Notification.find().distinct("token");
+        if(!tokens) {
+            return res.status(400).json({ message: "No tokens found" });
+        }
+        // Build payload
+        const payload = {
+            registration_id: tokens,
+            notification: {
+                body: title,
+                title: "AWARD APP",
+            },
+            data: {
+                url: url,
+            }
+        }
+        if(imageobj) {
+            payload.notification.image =  `${process.env.DOMAIN}/OneImage/${imageObj.filename}`;
+        }
+        console.log(JSON.stringify(payload));
+
+        const result = await fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `key=${process.env.FIREBASE_KEY}`,
+            },
+            body: JSON.stringify(payload)
+        });
+         const data = await result.json();
+         if(!result.ok){
+             throw new Error(`FCM request failed with status ${result.status}: ${data}`);
+         }
+         const date = new Date().toString().trim("T");
+         await Promise.all([
+             Notification.create({title: title, image: imageobj ? `${process.env.DOMAIN}/OneImage/${imageObj.filename}` : null, url: url, date: date}),
+              res.status(200).json({ message: "Notification sent successfully", data }),
+         ]);
+    } catch (error) {
+        console.error("Error sending notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });  
+    }
+}
+const getnotification = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const skipIndex = (page - 1) * limit; 
+    try {
+        const notification = await NotificationList.find().sort({ _id: -1 }).skip(skipIndex).limit(limit).exec();
+        res.status(200).json(notification);
+    } catch (error) {
+        console.error("Error sending notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -312,5 +372,7 @@ module.exports = {
     deleteAds,
     addOfferImage,
     getOffer,
-    deleteOffer
+    deleteOffer,
+    sentNoficationToAllUsers,
+    getnotification
 }
