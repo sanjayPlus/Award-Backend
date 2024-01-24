@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const OfferSchema = new mongoose.Schema({
+const AdsSchema = new mongoose.Schema({
   image: {
     type: String,
   },
@@ -15,5 +15,5 @@ const OfferSchema = new mongoose.Schema({
     }
 });
 
-const Offer = mongoose.model('Offer', OfferSchema);
-module.exports = Offer;
+const Ads = mongoose.model('Ads', AdsSchema);
+module.exports = Ads;
