@@ -318,7 +318,7 @@ async function sentNoficationToAllUsers() {
             }
         }
         if(imageobj) {
-            payload.notification.image =  `${process.env.DOMAIN}/OneImage/${imageObj.filename}`;
+            payload.notification.image =  `${process.env.DOMAIN}/OneImage/${imageobj.filename}`;
         }
         console.log(JSON.stringify(payload));
 
