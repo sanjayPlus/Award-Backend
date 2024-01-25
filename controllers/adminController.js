@@ -153,7 +153,7 @@ const addCarouselImage = async (req, res) => {
             name: name
         })
         if (!newCarousel) return res.status(400).json({ message: "Image not added" });
-        const  cacheData = await Carousel.find({}).sort({_id:-1});
+        const  cacheData = await Carousel.find({}).sort({_id:-1});//cache setting
         Cache.set("carousel", cacheData,cacheTime);
         res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
@@ -163,7 +163,7 @@ const addCarouselImage = async (req, res) => {
 }
 const getCarousel = async (req, res) => {
     try {
-         const cachedData = Cache.get("carousel");
+         const cachedData = Cache.get("carousel");//cache getting
        if (cachedData) {
        return res.status(200).json(cachedData);
        }
@@ -181,7 +181,7 @@ const deleteCarousel = async (req, res) => {
         const carousel = await Carousel.findByIdAndDelete(id);
         if (!carousel) return res.status(400).json({ message: "Image not deleted" });
         const  cacheData =  await Carousel.find({}).sort({_id:-1});
-        Cache.set("carousel", carousel ,cacheTime);
+        Cache.set("carousel", cacheData ,cacheTime);
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -200,6 +200,8 @@ const addGalleryImage = async (req, res) => {
             description: description
         })
         if (!newGallery) return res.status(400).json({ message: "Image not added" });
+        const cacheDate = await Gallery.find({}).sort({_id:-1});
+        Cache.set("gallery", cacheDate, cacheTime);
         res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -208,7 +210,12 @@ const addGalleryImage = async (req, res) => {
 }
 const getGallery = async (req, res) => {
     try {
-        const gallery = await Gallery.find({});
+        const cacheDate = Cache.get("gallery");
+        if (cacheDate){
+            return res.status(200).json(cacheDate);
+        }
+        const gallery = await Gallery.find({}).sort({_id:-1});
+        Cache.set("gallery", gallery, cacheTime)
         res.status(200).json(gallery);
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -221,6 +228,8 @@ const deleteGallery = async (req, res) => {
     try {
         const gallery = await Gallery.findByIdAndDelete(id);
         if (!gallery) return res.status(400).json({ message: "Image not deleted" });
+        const cacheDate = await Carousel.find({}).sort({_id:-1})
+        Cache.set("gallery", cacheDate, cacheTime)
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -239,6 +248,8 @@ const addAdsImage = async (req, res) => {
             description: description
         })
         if (!newAds) return res.status(400).json({ message: "Image not added" });
+        const cacheDate = await Ads.find({}).sort({_id:-1});
+        Cache.set("ads", cacheDate, cacheTime)
         res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -249,7 +260,12 @@ const addAdsImage = async (req, res) => {
 
 const getAds = async(req,res)=>{
     try {
-        const ads = await Ads.find({});
+        const cacheDate = Cache.get("ads")
+        if (cacheDate){
+            return res.status(200).json(cacheDate)
+        }
+        const ads = await Ads.find({}).set({_id:-1});
+        Cache.set("ads",ads,cacheTime)
         res.status(200).json(ads);
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -261,6 +277,8 @@ const deleteAds = async (req, res) => {
     try {
         const ads = await Ads.findByIdAndDelete(id);
         if (!ads) return res.status(400).json({ message: "Image not deleted" });
+        const cacheDate = await Ads.find({}).sort({_id:-1});
+        Cache.set("ads",cacheDate, cacheTime)
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -279,6 +297,8 @@ const addOfferImage = async (req, res) => {
             description
         })
         if (!newOffer) return res.status(400).json({ message: "Image not added" });
+        const cacheDate = await Offer.find({}).sort({_id:-1});
+        Cache.set("offer", cacheDate, cacheTime);
         res.status(200).json({ message: "Image added successfully" });
     } catch (error) {
         console.error("Error adding Image:", error.message)
@@ -288,7 +308,12 @@ const addOfferImage = async (req, res) => {
 }
 const getOffer = async (req, res) => {
     try {
-        const offer = await Offer.find({});
+        const cacheDate = Cache.get("offer")
+        if(cacheDate){
+            return res.status(200).json(cacheDate)
+        }
+        const offer = await Offer.find({}).sort({_id:-1});
+        Cache.set("offer",offer,cacheTime)
         res.status(200).json(offer);
     } catch (error) {
         console.error("Error adding image:", error.message);
@@ -300,6 +325,7 @@ const deleteOffer = async (req, res) => {
     try {
         const offer = await Offer.findByIdAndDelete(id);
         if (!offer) return res.status(400).json({ message: "Image not deleted" });
+        Cache.set(offer, cacheDate, cacheTime);
         res.status(200).json({ message: "Image deleted successfully" });
     } catch (error) {
         console.error("Error adding image:", error.message);
