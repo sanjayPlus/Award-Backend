@@ -298,6 +298,45 @@ console.log(tokenNew)
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const appleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    console.log(token, "apple");
+
+    if (!token) {
+      return res.status(400).json({ error: "ID token not provided." });
+    }
+
+    // Verify the ID token using the Firebase Admin SDK
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
+    // Retrieve user information based on the email from the decoded token
+    const user = await User.findOne({ email: decodedToken.email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Generate a new JWT token for the authenticated user
+    const tokenNew = jwt.sign({ userId: user._id }, jwtSecret, {
+      expiresIn: "36500d",
+    });
+
+    console.log(tokenNew);
+
+    // Send the new token and user information in the response
+    res.status(200).json({
+      token: tokenNew,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (error) {
+    console.error("Error during ID token verification:", error.message);
+    // Provide a more specific error message in the response
+    res.status(500).json({ error: "Internal Server Error: Unable to verify ID token" });
+  }
+};
+
 
 //fast search api
 const bloodDonation1 = async (req, res) => {
@@ -372,6 +411,50 @@ const bloodDonation2 = async (req, res) => {
     }
 };
 
+const autoLogin = async (req, res) => {
+  try {
+    // Retrieve userId from request
+    const userId = req.user.userId;
+
+    // Find user by userId
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Fetch data from the STORE_URL endpoint
+    const response = await fetch(
+      `${process.env.STORE_URL}/api/user/auto-login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          password: user.password, // Ensure you're not sending the actual password here for security reasons
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch data from STORE_URL");
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      return res.status(400).json({ error: data.error });
+    }
+    // Return the URL and token from the response
+    res.status(200).json({ url: data.url, token: data.token });
+  } catch (error) {
+    console.error("Error during autoLogin:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 module.exports ={
@@ -386,6 +469,8 @@ module.exports ={
     forgotPassword,
     verifyForgotPassword,
     googleLogin,
+    appleLogin,
     bloodDonation1,
-    bloodDonation2
+    bloodDonation2,
+    autoLogin
 }

@@ -18,6 +18,9 @@ router.post('/verifyotp', userController.verifyOTP);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/verify-password', userController.verifyForgotPassword);
 router.post('/google-login',userController.googleLogin);//googleLogin
+router.post('/apple-login',userController.appleLogin);
+router.post('/auto-login',userAuth,userController.autoLogin);
+
 //delete
 router.delete('/delete-user',userAuth, userController.deleteUser);
 
