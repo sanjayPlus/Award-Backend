@@ -442,7 +442,7 @@ module.exports = {
     addOfferImage,
     getOffer,
     deleteOffer,
-    sentNoficationToAllUsers,
-    getnotification,
+    sendNotificationsToAllDevices,
+    getNotifications,
     deleteNotification
 }
