@@ -4,6 +4,7 @@ const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 const serviceAccount = require("../firebase/firebase");
 const { sendMail } = require('../helpers/emailHelper');
+const Notification = require("../model/Notification");
 const register = async (req, res) => {
     try {
         
@@ -455,7 +456,21 @@ const autoLogin = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+const storeNotificationToken = async (req, res) => {
+    try {
+    const { FCMToken } = req.body;
+    const notification = await Notification.findOne({ token:FCMToken  }); 
+    if(!notification){
+      const notification = await Notification.create({ token: FCMToken, userId: req.user.userId });
+      res.status(200).json({ notification });
+    }else{
+      res.status(200).json({ notification });
+    }
+    }catch(error){
+      console.error("Error during token store:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 
 module.exports ={
     register,
@@ -472,5 +487,6 @@ module.exports ={
     appleLogin,
     bloodDonation1,
     bloodDonation2,
-    autoLogin
+    autoLogin,
+    storeNotificationToken
 }
