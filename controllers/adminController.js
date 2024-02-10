@@ -6,6 +6,7 @@ const Carousel = require("../model/Carousel");
 const Gallery = require("../model/Gallery");
 const Ads = require("../model/Ads");
 const Offer = require("../model/Offer");
+const Calender = require("../model/Calender");
 const Notification = require("../model/Notification");
 const NotificationList = require("../model/NotificationList");
 const serviceAccount = require("../firebase/firebase");
@@ -425,6 +426,45 @@ const deleteNotification = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const addCalenderEvent = async (req, res) => {
+    try {
+        
+        const { title, description,date  } = req.body;
+        console.log(req.body);
+          req.body.image = req.file;
+        let imageObj = req.body.image;
+        if (!date || !title || !description) {
+        return res
+            .status(400)
+            .json({ error: "Please provide all required fields." });
+        }
+
+        const calendar = await Calender.create({
+        date,
+        title,
+        description,
+        image: `${process.env.DOMAIN}/calenderImage/${imageObj.filename}`,
+        })
+        console.log(calendar);
+        res.status(201).json(calendar);
+    } catch (error) {
+        console.error("Error adding calendar event:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const getCalenderEvents = async (req, res) => {
+   try {
+       const date = req.query.date;
+       console.log(typeof(date))
+       const events = await Calender.find({date:date});
+       res.status(200).json(events);
+
+   } catch (error) {
+     console.error("Error getting calendar events:", error.message);
+     res.status(500).json({ error: "Internal Server Error" });
+   } 
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -446,5 +486,7 @@ module.exports = {
     deleteOffer,
     sendNotificationsToAllDevices,
     getNotifications,
-    deleteNotification
+    deleteNotification,
+    addCalenderEvent,
+    getCalenderEvents
 }

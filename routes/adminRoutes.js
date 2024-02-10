@@ -98,6 +98,27 @@ const OneStorage = multer.diskStorage({
     // console.log(file);
   },
 });
+const calendarStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/calenderImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const calendarImage = multer({
+  storage: calendarStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 
 // Configure storage engine instead of dest object.
 const OneImage = multer({
@@ -113,10 +134,11 @@ router.get('/carousel',adminController.getCarousel);
 router.get('/gallery',adminController.getGallery);
 router.get('/ads',adminController.getAds);
 router.get('/offers',adminController.getOffer);
+router.get('/calender-events',adminController.getCalenderEvents);
 
 // router.get('/notification',adminController.getnotification);
 
-router.post('/login', adminController.adminLogin);
+// router.post('/login', adminController.adminLogin);
 router.post('/register', adminController.adminRegister);
 router.post('/carousel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
 router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
@@ -126,8 +148,11 @@ router.post('/add-ads',adminAuth,adsImage.single("image"), adminController.addAd
 router.post('/delete-ads',adminAuth, adminController.deleteAds);
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
+router.post('/add-calender-events',adminAuth, calendarImage.single("image"), adminController.addCalenderEvent);
 //router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
+router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);
+
 
 module.exports = router;
