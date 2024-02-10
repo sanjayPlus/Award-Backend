@@ -149,7 +149,7 @@ router.post('/delete-ads',adminAuth, adminController.deleteAds);
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
 router.post('/add-calender-events',adminAuth, calendarImage.single("image"), adminController.addCalenderEvent);
-//router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
+router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);

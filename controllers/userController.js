@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const serviceAccount = require("../firebase/firebase");
 const { sendMail } = require('../helpers/emailHelper');
 const Notification = require("../model/Notification");
+const Feedback = require("../model/Feedback");
 const register = async (req, res) => {
     try {
         
@@ -471,7 +472,34 @@ const storeNotificationToken = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
-
+//feedback
+const feedback = async (req, res) => {
+    try {
+        const { feedback, rating } = req.body;
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        if(!feedback || !rating){
+            return res.status(400).json({ message: "Please provide feedback and rating" });
+        }
+        if(rating < 1 || rating > 5){
+            return res.status(400).json({ message: "Rating must be between 1 and 5" });
+        }
+        const newFeedback = new Feedback({
+            feedback,
+            rating,
+            userId: user._id,
+            username: user.name,
+            email: user.email
+        });
+        await newFeedback.save();
+        res.status(200).json({ message: "Feedback submitted successfully" });
+    }catch(error){
+        console.error("Error submitting feedback:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports ={
     register,
     login,
@@ -488,5 +516,6 @@ module.exports ={
     bloodDonation1,
     bloodDonation2,
     autoLogin,
-    storeNotificationToken
+    storeNotificationToken,
+    feedback
 }

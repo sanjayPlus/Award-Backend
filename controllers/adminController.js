@@ -335,7 +335,7 @@ const deleteOffer = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-async function sendNotificationsToAllDevices(req, res) {
+async function sentNoficationToAllUsers(req, res) {
     try {
         const { title, url } = req.body;
         const imageObj = req.file;
@@ -484,7 +484,7 @@ module.exports = {
     addOfferImage,
     getOffer,
     deleteOffer,
-    sendNotificationsToAllDevices,
+    sentNoficationToAllUsers,
     getNotifications,
     deleteNotification,
     addCalenderEvent,
