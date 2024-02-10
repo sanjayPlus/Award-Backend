@@ -138,8 +138,8 @@ router.get('/calender-events',adminController.getCalenderEvents);
 
 // router.get('/notification',adminController.getnotification);
 
-// router.post('/login', adminController.adminLogin);
-router.post('/register', adminController.adminRegister);
+router.post('/login', adminController.adminLogin);
+// router.post('/register', adminController.adminRegister);
 router.post('/carousel',adminAuth, carouselImage.single("image"), adminController.addCarouselImage);
 router.post('/delete-carousel',adminAuth, adminController.deleteCarousel);
 router.post('/gallery',adminAuth,galleryImage.single("image"), adminController.addGalleryImage);
