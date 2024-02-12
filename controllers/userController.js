@@ -6,6 +6,7 @@ const serviceAccount = require("../firebase/firebase");
 const { sendMail } = require('../helpers/emailHelper');
 const Notification = require("../model/Notification");
 const Feedback = require("../model/Feedback");
+const Reason = require('../model/Reason');
 const register = async (req, res) => {
     try {
 
@@ -594,7 +595,32 @@ const updateProfileImage = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   };
+  const addReason = async (req, res) => {
+    try {
+      const { reason } = req.body;
   
+      // Validate if the reason is provided
+      if (!reason) {
+        return res.status(400).json({ error: "Reason is required" });
+      }
+  
+      // Assuming Reason is your Sequelize model
+      const createdReason = await Reason.create({
+        reason,
+        userId: req.user.userId,
+      });
+  
+      // Check if the reason was created successfully
+      if (createdReason) {
+        return res.status(200).json({ message: "Reason added successfully" });
+      } else {
+        return res.status(500).json({ error: "Failed to add reason" });
+      }
+    } catch (error) {
+      console.error("Error during reason creation:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
 module.exports = {
     register,
     login,
@@ -614,5 +640,6 @@ module.exports = {
     storeNotificationToken,
     feedback,
     createIdCard,
-    updateProfileImage
+    updateProfileImage,
+    addReason
 }

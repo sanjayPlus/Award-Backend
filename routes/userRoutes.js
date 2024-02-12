@@ -69,7 +69,7 @@ router.post('/auto-login', userAuth, userController.autoLogin);
 router.post('/add-notification-token', userAuth, userController.storeNotificationToken);
 router.post('/feedback', userAuth, userController.feedback);
 router.post('/create-id-card', CardImage.single('profileImage'), userAuth, userController.createIdCard);
-
+router.post('/add-reason',userAuth,userController.addReason)
 //delete
 router.delete('/delete-user', userAuth, userController.deleteUser);
 
