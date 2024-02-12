@@ -134,8 +134,8 @@ router.get('/carousel',adminController.getCarousel);
 router.get('/gallery',adminController.getGallery);
 router.get('/ads',adminController.getAds);
 router.get('/offers',adminController.getOffer);
-router.get('/calender-events',adminController.getCalenderEvents);
-
+router.get('/calendar-events',adminController.getCalenderEvents);
+router.get('/notifications',adminController.getNotifications);
 // router.get('/notification',adminController.getnotification);
 
 router.post('/login', adminController.adminLogin);
@@ -153,6 +153,6 @@ router.post('/sent-notification',adminAuth,OneImage.single("image"), adminContro
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);
-
+router.delete('/delete-calender-event/:id',adminAuth, adminController.deleteCalenderEvent);
 
 module.exports = router;

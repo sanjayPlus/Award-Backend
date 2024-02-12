@@ -465,6 +465,19 @@ const getCalenderEvents = async (req, res) => {
      res.status(500).json({ error: "Internal Server Error" });
    } 
 }
+const deleteCalenderEvent = async (req, res) => {
+    try {
+        const calendar = await Calender.findOneAndDelete({_id:req.params.id});
+        if (!calendar) {
+        return res.status(404).json({ error: "Calendar not found" });
+        }
+        
+        res.status(200).json({ msg: "calendar removed" });
+    } catch (error) {
+        console.error("Error getting calendar events:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -488,5 +501,6 @@ module.exports = {
     getNotifications,
     deleteNotification,
     addCalenderEvent,
-    getCalenderEvents
+    getCalenderEvents,
+    deleteCalenderEvent
 }
