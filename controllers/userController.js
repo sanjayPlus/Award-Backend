@@ -579,7 +579,22 @@ const createIdCard = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
+const updateProfileImage = async (req, res) => {
+    try {
+      const profileImage  = req.file;
+      const user = await User.findById(req.user.userId);
+      if (!user) {
+        return res.status(400).json({ error: "User not found" });
+      }
+      user.profileImage = `${process.env.DOMAIN}/profileImage/${profileImage.filename}`;
+      await user.save();
+      res.status(200).json({ profileImage });
+    } catch (error) {
+      console.error("Error during profile image update:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
 module.exports = {
     register,
     login,
@@ -598,5 +613,6 @@ module.exports = {
     autoLogin,
     storeNotificationToken,
     feedback,
-    createIdCard
+    createIdCard,
+    updateProfileImage
 }

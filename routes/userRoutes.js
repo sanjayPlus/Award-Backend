@@ -58,6 +58,7 @@ router.get('/bloodDonationSearch2', userController.bloodDonation2);
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/update-user', userAuth, userController.updateUser);
+router.post('/profile-image',ProfileImage.single('profileImage'),userAuth,userController.updateProfileImage);
 router.post('/sentotp', userController.sentOTP);
 router.post('/verifyotp', userController.verifyOTP);
 router.post('/forgot-password', userController.forgotPassword);

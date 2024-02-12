@@ -12,6 +12,7 @@ const NotificationList = require("../model/NotificationList");
 const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const Cache = require('../helpers/Cache');
+const Feedback = require("../model/Feedback");
 const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
@@ -478,6 +479,33 @@ const deleteCalenderEvent = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const getFeedback = async (req, res) => {
+    try {
+        const { page, perPage } = req.query;
+        const skip = (page - 1) * perPage; // Calculate the skip value
+        const feedback = await Feedback.find().skip(skip).limit(perPage);
+        res.status(200).json(feedback);
+    } catch (error) {
+        console.error("Error getting feedback:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+const deleteFeedback = async (req, res) => {
+    try {
+        const feedbackId = req.params.id; // Get the feedback ID from the request parameters
+        const deletedFeedback = await Feedback.findByIdAndDelete(feedbackId);
+
+        if (!deletedFeedback) {
+            return res.status(404).json({ error: 'Feedback not found' });
+        }
+
+        res.status(204).send(); // No content (successful deletion)
+    } catch (error) {
+        console.error('Error deleting feedback:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 module.exports = {
     adminLogin,
     adminRegister,
@@ -502,5 +530,7 @@ module.exports = {
     deleteNotification,
     addCalenderEvent,
     getCalenderEvents,
-    deleteCalenderEvent
+    deleteCalenderEvent,
+    getFeedback,
+    deleteFeedback
 }
