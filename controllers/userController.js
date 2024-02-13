@@ -603,11 +603,15 @@ const updateProfileImage = async (req, res) => {
       if (!reason) {
         return res.status(400).json({ error: "Reason is required" });
       }
-  
+      const user = await User.findById(req.user.userId);
       // Assuming Reason is your Sequelize model
       const createdReason = await Reason.create({
         reason,
         userId: req.user.userId,
+        date: new Date(),
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
       });
   
       // Check if the reason was created successfully

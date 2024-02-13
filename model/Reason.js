@@ -8,6 +8,19 @@ const reasonSchema = new mongoose.Schema({
   },
   userId: {
     type: String,
+  },
+  name: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   }
 });
 
