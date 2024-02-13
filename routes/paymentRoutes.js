@@ -24,7 +24,7 @@ router.get("/checkout/:amount/:token", async (req, res) => {
     if (!req.params.amount) {
       return res.status(404).json({ message: "Amount not found" });
     }
-    if (!user.name || !user.phoneNumber) {
+    if (!user.name || !user.phone) {
       return res
         .status(404)
         .json({ message: "Name or phone number not found" });
@@ -48,7 +48,7 @@ router.get("/checkout/:amount/:token", async (req, res) => {
         "/" +
         token,
       redirectMode: "GET",
-      mobileNumber: user.phoneNumber, // corrected property name 'phone' to 'phoneNumber'
+      mobileNumber: user.phone, // corrected property name 'phone' to 'phone'
       paymentInstrument: {
         type: "PAY_PAGE",
       },
@@ -125,7 +125,7 @@ router.get(
 
         if (response.data.success === true) {
           if (response.data.data.state === "COMPLETED") {
-            const { name, email, phoneNumber } = user;
+            const { name, email, phone } = user;
             const paymentAmount = response.data.data.amount / 100;
             let local = "";
             if (user.panchayath) {
@@ -152,7 +152,7 @@ router.get(
               body: response.data.data,
               name: name || "",
               email: email || "",
-              phone: phoneNumber || "",
+              phone: phone || "",
               district: user.district || "",
               assembly: user.assembly || "",
               local: local  || "",
@@ -179,7 +179,7 @@ router.get(
         <p>Thank you for your Contribution to Avard</p>
         <p><b>PAYMENT DETAILS</b></p>
         <h4 style="background:#ffffff;margin: 0 auto;width: max-content;padding: 0 10px;color: black;border-radius: 4px;">Amount Rs.${paymentAmount}</h4>
-        <p>Account Transaction Id is ${merchantTransactionId}<br>Phone ${phoneNumber}</p>
+        <p>Account Transaction Id is ${merchantTransactionId}<br>Phone ${phone}</p>
         <p>For App Support Contact avardkuda@gmail.com</p>
         <p style="font-size:0.9em;">Sincerely,<br />Avard Kuda</p>
         <hr style="border:none;border-top:1px solid #eee" />
@@ -242,7 +242,7 @@ router.post(
 
         if (response.data.success === true) {
           if (response.data.data.state === "COMPLETED") {
-            const { name, email, phoneNumber } = user;
+            const { name, email, phone } = user;
             const paymentAmount = response.data.data.amount / 100;
             let local = "";
             if (user.panchayath) {
@@ -267,7 +267,7 @@ router.post(
               body: response.data.data,
               name: name || "",
               email: email || "",
-              phone: phoneNumber || "",
+              phone: phone || "",
               district: user.district || "",
               assembly: user.assembly || "",
               local: local  || "",
@@ -294,7 +294,7 @@ router.post(
         <p>Thank you for your Contribution to AVARD. Your Payment of Rs.${paymentAmount} is successful. Your transaction id is ${merchantTransactionId}. Thank you for choosing AVARD. Thrissur</p>
         <p><b>PAYMENT DETAILS</b></p>
         <h2 style="background:#ffffff;margin: 0 auto;width: max-content;padding: 0 10px;color: black;border-radius: 4px;">Amount Rs.${paymentAmount}</h2>
-        <p><b>Account Transaction Id:</b> ${merchantTransactionId}<br><b>Phone:</b> ${phoneNumber}</p>
+        <p><b>Account Transaction Id:</b> ${merchantTransactionId}<br><b>Phone:</b> ${phone}</p>
         <p>For App Support Contact avardkuda@gmail.com</p>
         <p style="font-size:0.9em;">Sincerely,<br /><b>AVARD APP</b></p>
         <hr style="border:none;border-top:1px solid #eee" />
