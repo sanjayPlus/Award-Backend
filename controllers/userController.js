@@ -345,7 +345,7 @@ const appleLogin = async (req, res) => {
 const bloodDonation1 = async (req, res) => {
     try {
         const { blood_group, district, place, name } = req.query;
-
+        console.log(blood_group, district, place, name)
         if (!blood_group || !district) {
             return res.status(400).json({ message: "Blood group and district are required" });
         }
@@ -384,6 +384,7 @@ const bloodDonation1 = async (req, res) => {
 const bloodDonation2 = async (req, res) => {
     try {
         const { blood_group, district, place, name } = req.query;
+        console.log(blood_group, district, place, name)
         let filterData = await User.find({});
 
         if (name) {
@@ -405,7 +406,7 @@ const bloodDonation2 = async (req, res) => {
             place,
             name
         }));
-
+        
 
         res.status(200).json(filteredResponse);
     } catch (error) {
