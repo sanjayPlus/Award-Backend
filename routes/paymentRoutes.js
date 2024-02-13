@@ -407,5 +407,15 @@ router.get("/total-amount", async (req, res) => {
   }
 });
 
-
+router.delete("/delete-payment/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const payment = await Payment.findByIdAndDelete(id);
+    if (!payment) return res.status(404).json({ message: "Payment not found" });
+    res.status(200).json({ message: "Payment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting payment:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
 module.exports = router;
