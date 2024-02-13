@@ -81,8 +81,9 @@ router.get("/checkout/:amount/:token", async (req, res) => {
       .status(200)
       .json({ url: response.data.data.instrumentResponse.redirectInfo.url });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
-      message: error.message,
+      message: error,
       success: false,
     });
   }
