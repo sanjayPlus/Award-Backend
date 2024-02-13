@@ -485,7 +485,11 @@ const getFeedback = async (req, res) => {
         const { page, perPage } = req.query;
         const skip = (page - 1) * perPage; // Calculate the skip value
         const feedback = await Feedback.find().skip(skip).limit(perPage);
-        res.status(200).json(feedback);
+        res.status(200).json({
+            data: feedback,
+            currentPage: page,
+            totalPages: Math.ceil(await Feedback.countDocuments() / perPage),
+        });
     } catch (error) {
         console.error("Error getting feedback:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
