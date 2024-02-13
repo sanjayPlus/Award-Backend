@@ -15,6 +15,7 @@ const jwtSecret = process.env.JWT_SECRET;
 router.get("/checkout/:amount/:token", async (req, res) => {
   try {
     const token = req.params.token;
+    console.log(token)
     const { userId } = jwt.verify(token, jwtSecret);
     const user = await User.findById(userId);
     if (!user) {
