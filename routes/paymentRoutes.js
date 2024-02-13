@@ -4,11 +4,11 @@ const axios = require("axios");
 const crypto = require("crypto");
 const userAuth = require("../middleware/userAuth");
 const adminAuth = require("../middleware/adminAuth");
-const User = require("../models/User");
+const User = require("../model/User");
 const jwt = require("jsonwebtoken");
-const { sendMail } = require("../controllers/emailController");
-const Payment = require("../models/Payment");
-const InitPayment = require("../models/InitPayment");
+const { sendMail } = require("../helpers/emailHelper");
+const Payment = require("../model/Payment");
+const InitPayment = require("../model/InitPayment");
 
 const jwtSecret = process.env.JWT_SECRET;
 
