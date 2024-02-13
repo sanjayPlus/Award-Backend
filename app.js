@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.static('public'));
 app.use("/api/user",userRoutes);
 app.use("/api/admin",adminRoutes);
-app.use("/api/payment",paymentRoutes);
+// app.use("/api/payment",paymentRoutes);
 
 app.get("/", (req, res) => {
     res.send('hello world');
