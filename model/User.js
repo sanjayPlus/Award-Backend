@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
-        default:`${process.env.DOMAIN}/images/avatar.png`
+        default:``
     },
     address:{
         type: String,
