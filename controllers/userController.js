@@ -389,11 +389,11 @@ const bloodDonation2 = async (req, res) => {
         let filterData = await User.find({});
 
         if (name) {
-            filterData.sort((a, b) => a.name.localeCompare(b.name));
+            filterData = filterData.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
         }
         
         if (place) {
-            filterData.sort((a, b) => a.place.localeCompare(b.place));
+            filterData = filterData.filter(item => item.place.toLowerCase().includes(place.toLowerCase()))
         }
         
         if (blood_group) {
