@@ -368,10 +368,11 @@ const bloodDonation1 = async (req, res) => {
 
         // Extract only the specified fields
         const filteredResponse = foundUser.map(user => ({
-            blood_group: user.blood_group,
-            district: user.district,
-            place: user.place,
-            name: user.name
+            blood_group: user.blood_group || null,
+            district: user.district || null,
+            place: user.place || null,
+            name: user.name || null,
+            phone: user.phone || null
         }));
 
         res.status(200).json(filteredResponse);
@@ -400,11 +401,12 @@ const bloodDonation2 = async (req, res) => {
         }
 
         // Extract only the specified fields
-        const filteredResponse = filterData.map(({ blood_group, district, place, name }) => ({
+        const filteredResponse = filterData.map(({ blood_group, district, place, name, phone }) => ({
             blood_group,
             district,
             place,
-            name
+            name,
+            phone
         }));
 
 
