@@ -393,7 +393,7 @@ const bloodDonation2 = async (req, res) => {
         }
         
         if (place) {
-            filterData = filterData.filter(item => item?.place.toLowerCase().includes(place?.toLowerCase()))
+            filterData = filterData?.filter(item => item?.place.toLowerCase()?.includes(place?.toLowerCase()))
         }
         
         if (blood_group) {
