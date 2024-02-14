@@ -337,24 +337,24 @@ const deleteOffer = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-async function sentNoficationToAllUsers(req, res) {
+const  sentNotificationToAllUsers = async (req, res)=> {
     try {
         const { title, url } = req.body;
         const imageObj = req.file;
 
         // Retrieve all tokens from the Notification model
         const allTokens = await Notification.find().distinct('token');
-        if (!allTokens) {
+        if (allTokens.length === 0) {
             throw new Error('No tokens found');
         }
-        
+
         // Build the payload
         const payload = {
             registration_ids: allTokens,
             notification: {
                 body: title,
                 title: "Avard Kuda",
-                android_channel_id: "intuc"
+                android_channel_id: "avardkuda",
             },
             data: {
                 url: url,
@@ -396,6 +396,7 @@ async function sentNoficationToAllUsers(req, res) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
 const getNotifications = async (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -590,7 +591,7 @@ module.exports = {
     addOfferImage,
     getOffer,
     deleteOffer,
-    sentNoficationToAllUsers,
+    sentNotificationToAllUsers,
     getNotifications,
     deleteNotification,
     addCalenderEvent,

@@ -384,7 +384,6 @@ const bloodDonation1 = async (req, res) => {
 const bloodDonation2 = async (req, res) => {
     try {
         const { blood_group, district, place, name } = req.query;
-        console.log(blood_group, district, place, name)
         let filterData = await User.find({});
 
         if (name) {
@@ -399,7 +398,7 @@ const bloodDonation2 = async (req, res) => {
         if (district) {
             filterData = filterData.filter((user) => user.district === district);
         }
-        console.log(filterData);
+
         // Extract only the specified fields
         const filteredResponse = filterData.map(({ blood_group, district, place, name }) => ({
             blood_group,
