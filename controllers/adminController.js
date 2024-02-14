@@ -432,7 +432,6 @@ const deleteNotification = async (req, res) => {
 }
 const addCalenderEvent = async (req, res) => {
     try {
-        
         const { title, description,date  } = req.body;
         console.log(req.body);
           req.body.image = req.file;
