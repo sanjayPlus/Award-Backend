@@ -389,18 +389,14 @@ const bloodDonation2 = async (req, res) => {
         let filterData = await User.find({});
 
         if (name) {
-           
-            filterData = filterData
-    .filter((user) => (user.name === name))
-    .sort((a, b) => a.name.localeCompare(b.name));
+
+            filterData = filterData.sort((a, b) => a.name.localeCompare(b.name));
 
         }
 
         if (place) {
-            filterData = filterData
-            .filter((user) => (user.place === place))
-            .sort((a, b) => a.name.localeCompare(b.name));
-        
+            filterData = filterData.sort((a, b) => a.place.localeCompare(b.place));
+
         }
         if (blood_group) {
             filterData = filterData.filter((user) => user.blood_group === blood_group);
@@ -592,49 +588,49 @@ const createIdCard = async (req, res) => {
 };
 const updateProfileImage = async (req, res) => {
     try {
-      const profileImage  = req.file;
-      const user = await User.findById(req.user.userId);
-      if (!user) {
-        return res.status(400).json({ error: "User not found" });
-      }
-      user.profileImage = `${process.env.DOMAIN}/profileImage/${profileImage.filename}`;
-      await user.save();
-      res.status(200).json({ profileImage });
+        const profileImage = req.file;
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(400).json({ error: "User not found" });
+        }
+        user.profileImage = `${process.env.DOMAIN}/profileImage/${profileImage.filename}`;
+        await user.save();
+        res.status(200).json({ profileImage });
     } catch (error) {
-      console.error("Error during profile image update:", error.message);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error during profile image update:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  };
-  const addReason = async (req, res) => {
+};
+const addReason = async (req, res) => {
     try {
-      const { reason } = req.body;
-  
-      // Validate if the reason is provided
-      if (!reason) {
-        return res.status(400).json({ error: "Reason is required" });
-      }
-      const user = await User.findById(req.user.userId);
-      // Assuming Reason is your Sequelize model
-      const createdReason = await Reason.create({
-        reason,
-        userId: req.user.userId,
-        date: new Date(),
-        name: user.name,
-        phone: user.phone,
-        email: user.email,
-      });
-  
-      // Check if the reason was created successfully
-      if (createdReason) {
-        return res.status(200).json({ message: "Reason added successfully" });
-      } else {
-        return res.status(500).json({ error: "Failed to add reason" });
-      }
+        const { reason } = req.body;
+
+        // Validate if the reason is provided
+        if (!reason) {
+            return res.status(400).json({ error: "Reason is required" });
+        }
+        const user = await User.findById(req.user.userId);
+        // Assuming Reason is your Sequelize model
+        const createdReason = await Reason.create({
+            reason,
+            userId: req.user.userId,
+            date: new Date(),
+            name: user.name,
+            phone: user.phone,
+            email: user.email,
+        });
+
+        // Check if the reason was created successfully
+        if (createdReason) {
+            return res.status(200).json({ message: "Reason added successfully" });
+        } else {
+            return res.status(500).json({ error: "Failed to add reason" });
+        }
     } catch (error) {
-      console.error("Error during reason creation:", error.message);
-      res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error during reason creation:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  };
+};
 module.exports = {
     register,
     login,
