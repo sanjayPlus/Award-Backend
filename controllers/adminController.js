@@ -9,6 +9,7 @@ const Offer = require("../model/Offer");
 const Calender = require("../model/Calender");
 const Notification = require("../model/Notification");
 const NotificationList = require("../model/NotificationList");
+const Directory = require("../model/Directory");
 const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const Cache = require('../helpers/Cache');
@@ -537,12 +538,13 @@ const deleteReason = async (req, res) => {
 }
 const addDirectory = async (req, res) => {
     try {
-      const { name, email, phone, address } = req.body;
+      const { name, email, phone, address ,category} = req.body;
       const directory = await Directory.create({
         name,
         email,
         phone,
         address,
+        category
       });
       res.status(201).json(directory);
     } catch (error) {

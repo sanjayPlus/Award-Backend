@@ -385,13 +385,22 @@ const bloodDonation1 = async (req, res) => {
 const bloodDonation2 = async (req, res) => {
     try {
         const { blood_group, district, place, name } = req.query;
+
         let filterData = await User.find({});
 
         if (name) {
-            filterData = filterData.filter((user) => user.name === name);
+           
+            filterData = filterData
+    .filter((user) => (user.name === name))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
         }
+
         if (place) {
-            filterData = filterData.filter((user) => user.place === place);
+            filterData = filterData
+            .filter((user) => (user.place === place))
+            .sort((a, b) => a.name.localeCompare(b.name));
+        
         }
         if (blood_group) {
             filterData = filterData.filter((user) => user.blood_group === blood_group);
@@ -408,8 +417,6 @@ const bloodDonation2 = async (req, res) => {
             name,
             phone
         }));
-
-
         res.status(200).json(filteredResponse);
     } catch (error) {
         console.error("Error retrieving user:", error.message);
