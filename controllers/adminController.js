@@ -446,7 +446,7 @@ const addCalenderEvent = async (req, res) => {
         date,
         title,
         description,
-        image: `${process.env.DOMAIN}/calenderImage/${imageObj.filename}`,
+        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}`,
         })
         console.log(calendar);
         res.status(201).json(calendar);
