@@ -410,7 +410,7 @@ const getNotifications = async (req, res) => {
             .skip(skipIndex)
             .exec();
 
-        res.status(200).json(notifications);
+        res.status(200).json({data: notifications, currentPage: page, totalPages: Math.ceil(await NotificationList.countDocuments() / limit) });
     } catch (err) {
         console.error('Error sending message:', err);
         res.status(500).json({ error: 'Internal Server Error' });
