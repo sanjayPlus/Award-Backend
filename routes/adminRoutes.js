@@ -101,7 +101,7 @@ const OneStorage = multer.diskStorage({
 const calendarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     // destination is used to specify the path of the directory in which the files have to be stored
-    cb(null, "./public/calenderImage");
+    cb(null, "./public/calendarImage");
   },
   filename: function (req, file, cb) {
     // It is the filename that is given to the saved file.
