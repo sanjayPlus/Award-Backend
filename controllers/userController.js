@@ -7,6 +7,13 @@ const { sendMail } = require('../helpers/emailHelper');
 const Notification = require("../model/Notification");
 const Feedback = require("../model/Feedback");
 const Reason = require('../model/Reason');
+const admin = require('firebase-admin');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    // Replace with your Firebase project config
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+  });
 const register = async (req, res) => {
     try {
 
