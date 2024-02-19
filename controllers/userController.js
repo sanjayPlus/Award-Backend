@@ -8,7 +8,7 @@ const Notification = require("../model/Notification");
 const Feedback = require("../model/Feedback");
 const Reason = require('../model/Reason');
 const admin = require('firebase-admin');
-
+const jwtSecret = process.env.JWT_SECRET;
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     // Replace with your Firebase project config
