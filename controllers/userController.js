@@ -8,12 +8,14 @@ const Notification = require("../model/Notification");
 const Feedback = require("../model/Feedback");
 const Reason = require('../model/Reason');
 const admin = require('firebase-admin');
+
+
 const jwtSecret = process.env.JWT_SECRET;
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     // Replace with your Firebase project config
     databaseURL: process.env.FIREBASE_DATABASE_URL,
-  });
+});
 const register = async (req, res) => {
     try {
 
@@ -138,7 +140,13 @@ const updateUser = async (req, res) => {
         if (!user) return res.status(400).json({ message: "User not found" });
 
         if (name) user.name = name;
-        if (password) user.password = password;
+        //hash password
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10)
+            user.password = hashedPassword;
+        }
+
         if (address) user.address = address;
         if (phone) user.phone = phone;
         if (aadhaar) user.aadhaar = aadhaar;
@@ -398,11 +406,11 @@ const bloodDonation2 = async (req, res) => {
         if (name) {
             filterData = filterData.filter(item => item.name.toLowerCase().includes(name.toLowerCase()))
         }
-        
+
         if (place) {
             filterData = filterData.filter(item => item?.place?.toLowerCase().includes(place.toLowerCase()));
-        }        
-        
+        }
+
         if (blood_group) {
             filterData = filterData.filter((user) => user.blood_group === blood_group);
         }
