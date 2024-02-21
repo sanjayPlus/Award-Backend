@@ -20,6 +20,7 @@ router.post('/verify-password', userController.verifyForgotPassword);
 router.post('/google-login',userController.googleLogin);//googleLogin
 router.post('/apple-login',userController.appleLogin);
 router.post('/auto-login',userAuth,userController.autoLogin);
+router.post('/auto-login-medal',userAuth,userController.autoLoginMedal);
 router.post('/add-notification-token',userAuth,userController.storeNotificationToken);
 router.post('/feedback',userAuth, userController.feedback);
 
