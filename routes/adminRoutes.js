@@ -101,7 +101,7 @@ const OneStorage = multer.diskStorage({
 const calendarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     // destination is used to specify the path of the directory in which the files have to be stored
-    cb(null, "./public/calenderImage");
+    cb(null, "./public/calendarImage");
   },
   filename: function (req, file, cb) {
     // It is the filename that is given to the saved file.
@@ -134,9 +134,11 @@ router.get('/carousel',adminController.getCarousel);
 router.get('/gallery',adminController.getGallery);
 router.get('/ads',adminController.getAds);
 router.get('/offers',adminController.getOffer);
-router.get('/calender-events',adminController.getCalenderEvents);
-
-// router.get('/notification',adminController.getnotification);
+router.get('/calendar-events',adminController.getCalenderEvents);
+router.get('/notifications',adminController.getNotifications);
+router.get('/feedbacks',adminAuth,adminController.getFeedback);
+router.get('/reasons',adminAuth,adminController.getReason);
+router.get('/directory',adminController.getDirectory);
 
 router.post('/login', adminController.adminLogin);
 // router.post('/register', adminController.adminRegister);
@@ -149,10 +151,16 @@ router.post('/delete-ads',adminAuth, adminController.deleteAds);
 router.post('/add-offer',adminAuth,offerImage.single("image"), adminController.addOfferImage);
 router.post('/delete-offer',adminAuth, adminController.deleteOffer);
 router.post('/add-calender-events',adminAuth, calendarImage.single("image"), adminController.addCalenderEvent);
-router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNoficationToAllUsers);
+router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNotificationToAllUsers);
+router.post('/add-directory',adminAuth, adminController.addDirectory);
+
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);
+router.delete('/delete-calender-event/:id',adminAuth, adminController.deleteCalenderEvent);
+router.delete('/delete-feedback/:id',adminAuth, adminController.deleteFeedback);
+router.delete('/delete-reason/:id',adminAuth, adminController.deleteReason);
+router.delete('/delete-directory/:id',adminAuth, adminController.deleteDirectory);
 
 
 module.exports = router;

@@ -9,9 +9,12 @@ const Offer = require("../model/Offer");
 const Calender = require("../model/Calender");
 const Notification = require("../model/Notification");
 const NotificationList = require("../model/NotificationList");
+const Directory = require("../model/Directory");
 const serviceAccount = require("../firebase/firebase");
 const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const Cache = require('../helpers/Cache');
+const Feedback = require("../model/Feedback");
+const Reason = require("../model/Reason");
 const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
@@ -335,24 +338,24 @@ const deleteOffer = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-async function sentNoficationToAllUsers(req, res) {
+const  sentNotificationToAllUsers = async (req, res)=> {
     try {
         const { title, url } = req.body;
         const imageObj = req.file;
 
         // Retrieve all tokens from the Notification model
         const allTokens = await Notification.find().distinct('token');
-        if (!allTokens) {
+        if (allTokens.length === 0) {
             throw new Error('No tokens found');
         }
-        
+
         // Build the payload
         const payload = {
             registration_ids: allTokens,
             notification: {
                 body: title,
                 title: "Avard Kuda",
-                android_channel_id: "intuc"
+                android_channel_id: "avardkuda",
             },
             data: {
                 url: url,
@@ -394,6 +397,7 @@ async function sentNoficationToAllUsers(req, res) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
 const getNotifications = async (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -406,7 +410,7 @@ const getNotifications = async (req, res) => {
             .skip(skipIndex)
             .exec();
 
-        res.status(200).json(notifications);
+        res.status(200).json({data: notifications, currentPage: page, totalPages: Math.ceil(await NotificationList.countDocuments() / limit) });
     } catch (err) {
         console.error('Error sending message:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -428,7 +432,6 @@ const deleteNotification = async (req, res) => {
 }
 const addCalenderEvent = async (req, res) => {
     try {
-        
         const { title, description,date  } = req.body;
         console.log(req.body);
           req.body.image = req.file;
@@ -443,7 +446,7 @@ const addCalenderEvent = async (req, res) => {
         date,
         title,
         description,
-        image: `${process.env.DOMAIN}/calenderImage/${imageObj.filename}`,
+        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}`,
         })
         console.log(calendar);
         res.status(201).json(calendar);
@@ -465,6 +468,111 @@ const getCalenderEvents = async (req, res) => {
      res.status(500).json({ error: "Internal Server Error" });
    } 
 }
+const deleteCalenderEvent = async (req, res) => {
+    try {
+        const calendar = await Calender.findOneAndDelete({_id:req.params.id});
+        if (!calendar) {
+        return res.status(404).json({ error: "Calendar not found" });
+        }
+        
+        res.status(200).json({ msg: "calendar removed" });
+    } catch (error) {
+        console.error("Error getting calendar events:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getFeedback = async (req, res) => {
+    try {
+        const { page, perPage } = req.query;
+        const skip = (page - 1) * perPage; // Calculate the skip value
+        const feedback = await Feedback.find().skip(skip).limit(perPage);
+        res.status(200).json({
+            data: feedback,
+            currentPage: page,
+            totalPages: Math.ceil(await Feedback.countDocuments() / perPage),
+        });
+    } catch (error) {
+        console.error("Error getting feedback:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+const deleteFeedback = async (req, res) => {
+    try {
+        const feedbackId = req.params.id; // Get the feedback ID from the request parameters
+        const deletedFeedback = await Feedback.findByIdAndDelete(feedbackId);
+
+        if (!deletedFeedback) {
+            return res.status(404).json({ error: 'Feedback not found' });
+        }
+        res.status(200).json({ message: 'Feedback deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting feedback:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+const getReason = async (req, res) => {
+    try {
+        const { page, perPage } = req.query;
+        const skip = (page - 1) * perPage; // Calculate the skip value
+        const reason = await Reason.find().skip(skip).limit(perPage);
+        res.status(200).json(reason);
+    } catch (error) {
+        console.error("Error getting feedback:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteReason = async (req, res) => {
+    try {
+        const reasonId = req.params.id; // Get the feedback ID from the request parameters
+        const deletedReason = await Reason.findByIdAndDelete(reasonId);
+        if(!deletedReason){
+            return res.status(404).json({ error: 'Reason not found' });
+        }
+        res.status(200).json({message:"Reason deleted successfully"}); // No content (successful deletion)
+    } catch (error) {
+        console.error('Error deleting reason:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+const addDirectory = async (req, res) => {
+    try {
+      const { name, email, phone, address ,category} = req.body;
+      const directory = await Directory.create({
+        name,
+        email,
+        phone,
+        address,
+        category
+      });
+      res.status(201).json(directory);
+    } catch (error) {
+      console.error("Error adding directory:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+      
+  }
+  const getDirectory = async (req, res) => {
+    try {
+      const directory = await Directory.find();
+      res.status(200).json(directory);
+    } catch (error) {
+      console.error("Error getting directory:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+  const deleteDirectory = async (req, res) => {
+    try {
+      const directory = await Directory.findByIdAndDelete(req.params.id);
+      if (!directory) {
+        return res.status(404).json({ error: "Directory not found" });
+      }
+      res.status(200).json({ message: "Directory deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting directory:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 module.exports = {
     adminLogin,
     adminRegister,
@@ -484,9 +592,18 @@ module.exports = {
     addOfferImage,
     getOffer,
     deleteOffer,
-    sentNoficationToAllUsers,
+    sentNotificationToAllUsers,
     getNotifications,
     deleteNotification,
     addCalenderEvent,
-    getCalenderEvents
+    getCalenderEvents,
+    deleteCalenderEvent,
+    getFeedback,
+    deleteFeedback,
+    getReason,
+    deleteReason,
+    addDirectory,
+    getDirectory,
+    deleteDirectory
+    
 }
