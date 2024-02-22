@@ -15,6 +15,7 @@ const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const Cache = require('../helpers/Cache');
 const Feedback = require("../model/Feedback");
 const Reason = require("../model/Reason");
+const Seminar = require("../model/Seminar");
 const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
@@ -573,6 +574,52 @@ const addDirectory = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  const addSeminar = async (req, res) => {
+    try {
+      const { subject, description, date, location,  link } = req.body;
+    
+       let imageObj = req.file;
+      if (!subject || !description || !date || !location || !link) {
+        return res.status(400).json({ error: "Please provide all required fields." });
+      }
+      const seminar = await Seminar.create({
+        subject,
+        description,
+        date,
+        location,
+        photo: `${process.env.DOMAIN}/seminarImage/${imageObj.filename}`,
+        link
+      });
+      res.status(201).json(seminar);
+    } catch (error) {
+       console.error("Error adding seminar:", error.message);
+      res.status(500).json({ error: "Internal Server Error" }); 
+    }
+    }
+    
+    const getSeminar = async (req, res) => {
+        try {
+            const seminar = await Seminar.find();
+            res.status(200).json(seminar);
+        } catch (error) {
+            console.error("Error getting seminar:", error.message);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+    
+    const deleteSeminar = async (req, res) => {
+        try {
+            const seminar = await Seminar.findByIdAndDelete(req.params.id);
+            if (!seminar) {
+                return res.status(404).json({ error: "Seminar not found" });
+            }
+            res.status(200).json({ message: "Seminar deleted successfully" });
+        }catch (error) {
+            console.error("Error deleting seminar:", error.message);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
 module.exports = {
     adminLogin,
     adminRegister,
@@ -604,6 +651,8 @@ module.exports = {
     deleteReason,
     addDirectory,
     getDirectory,
-    deleteDirectory
-    
+    deleteDirectory,
+    addSeminar,
+    getSeminar,
+    deleteSeminar
 }

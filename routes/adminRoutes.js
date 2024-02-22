@@ -98,6 +98,13 @@ const OneStorage = multer.diskStorage({
     // console.log(file);
   },
 });
+// Configure storage engine instead of dest object.
+const OneImage = multer({
+  storage: OneStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 const calendarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     // destination is used to specify the path of the directory in which the files have to be stored
@@ -120,13 +127,31 @@ const calendarImage = multer({
   },
 });
 
+
+const seminarStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/seminarImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
 // Configure storage engine instead of dest object.
-const OneImage = multer({
-  storage: OneStorage,
+const seminarImage = multer({
+  storage: seminarStorage,
   limits: {
     fileSize: 20 * 1024 * 1024, // 20MB in bytes
   },
 });
+
+
+
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
@@ -139,6 +164,7 @@ router.get('/notifications',adminController.getNotifications);
 router.get('/feedbacks',adminAuth,adminController.getFeedback);
 router.get('/reasons',adminAuth,adminController.getReason);
 router.get('/directory',adminController.getDirectory);
+router.get('/get-seminar',adminController.getSeminar);
 
 router.post('/login', adminController.adminLogin);
 // router.post('/register', adminController.adminRegister);
@@ -153,6 +179,7 @@ router.post('/delete-offer',adminAuth, adminController.deleteOffer);
 router.post('/add-calender-events',adminAuth, calendarImage.single("image"), adminController.addCalenderEvent);
 router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNotificationToAllUsers);
 router.post('/add-directory',adminAuth, adminController.addDirectory);
+router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
 
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
@@ -161,6 +188,7 @@ router.delete('/delete-calender-event/:id',adminAuth, adminController.deleteCale
 router.delete('/delete-feedback/:id',adminAuth, adminController.deleteFeedback);
 router.delete('/delete-reason/:id',adminAuth, adminController.deleteReason);
 router.delete('/delete-directory/:id',adminAuth, adminController.deleteDirectory);
+router.delete('/delete-seminar/:id',adminAuth, adminController.deleteSeminar);
 
 
 module.exports = router;
