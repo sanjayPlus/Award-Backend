@@ -150,6 +150,50 @@ const seminarImage = multer({
   },
 });
 
+const quoteStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/quoteImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const quoteImage = multer({
+  storage: quoteStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
+
+const quoteStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/quoteImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const quoteImage = multer({
+  storage: quoteStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
+
 
 
 router.get('/protected', adminAuth,adminController.protected);
@@ -165,6 +209,8 @@ router.get('/feedbacks',adminAuth,adminController.getFeedback);
 router.get('/reasons',adminAuth,adminController.getReason);
 router.get('/directory',adminController.getDirectory);
 router.get('/get-seminar',adminController.getSeminar);
+router.get('/daily-quote',adminController.getDailyQuote);
+
 
 router.post('/login', adminController.adminLogin);
 // router.post('/register', adminController.adminRegister);
@@ -181,6 +227,7 @@ router.post('/sent-notification',adminAuth,OneImage.single("image"), adminContro
 router.post('/add-directory',adminAuth, adminController.addDirectory);
 router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
 
+router.post('/add-quote',adminAuth, quoteImage.single("image"), adminController.addDailyQuote);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);
@@ -190,5 +237,6 @@ router.delete('/delete-reason/:id',adminAuth, adminController.deleteReason);
 router.delete('/delete-directory/:id',adminAuth, adminController.deleteDirectory);
 router.delete('/delete-seminar/:id',adminAuth, adminController.deleteSeminar);
 
+router.delete('/delete-quote/:id',adminAuth, adminController.deleteDailyQuote);
 
 module.exports = router;
