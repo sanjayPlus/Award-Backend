@@ -15,6 +15,7 @@ const jwtSecret = process.env.JWT_ADMIN_SECRET;
 const Cache = require('../helpers/Cache');
 const Feedback = require("../model/Feedback");
 const Reason = require("../model/Reason");
+const DailyQuote = require("../model/DailyQuote");
 const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
@@ -573,6 +574,46 @@ const addDirectory = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
+  const addDailyQuote = async (req, res) => {
+    try {
+      const { quote, date, href } = req.body;
+      const image = req.file.filename;
+      const dailyQuote = await DailyQuote.create({
+        quote,
+        date,
+        href,
+        image: `${process.env.DOMAIN}/carouselImage/${image.filename}`
+      });
+      res.status(201).json(dailyQuote);
+    }catch(error){
+        console.log(error)
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  const getDailyQuote = async (req, res) => {
+    try {
+      const dailyQuote = await DailyQuote.find();
+      res.status(200).json(dailyQuote);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+  const deleteDailyQuote = async (req, res) => {
+    try {
+      const dailyQuote = await DailyQuote.findByIdAndDelete(req.params.id);
+      if (!dailyQuote) {
+        return res.status(404).json({ error: "DailyQuote not found" });
+      }
+      res.status(200).json({ message: "DailyQuote deleted successfully" });
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -605,5 +646,7 @@ module.exports = {
     addDirectory,
     getDirectory,
     deleteDirectory
-    
+    ,addDailyQuote
+    ,getDailyQuote
+    ,deleteDailyQuote   
 }
