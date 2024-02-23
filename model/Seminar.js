@@ -18,6 +18,9 @@ const SeminarSchema = new mongoose.Schema({
     },
     link:{
         type:String,
+    },
+    seminarType:{
+        type:String,
     }
 });
 

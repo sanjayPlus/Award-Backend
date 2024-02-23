@@ -578,10 +578,10 @@ const addDirectory = async (req, res) => {
 
   const addSeminar = async (req, res) => {
     try {
-      const { subject, description, date, location,  link } = req.body;
+      const { subject, description, date, location,  link, seminarType } = req.body;
     
        let imageObj = req.file;
-      if (!subject || !description || !date || !location || !link) {
+      if (!subject || !description || !date || !location || !link || !seminarType) {
         return res.status(400).json({ error: "Please provide all required fields." });
       }
       const seminar = await Seminar.create({
@@ -590,7 +590,8 @@ const addDirectory = async (req, res) => {
         date,
         location,
         photo: `${process.env.DOMAIN}/seminarImage/${imageObj.filename}`,
-        link
+        link,
+        seminarType
       });
       res.status(201).json(seminar);
     } catch (error) {
