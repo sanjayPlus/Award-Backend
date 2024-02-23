@@ -174,6 +174,29 @@ const quoteImage = multer({
 
 
 
+const careerStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/careerImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const careerImage = multer({
+  storage: careerStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
+
+
 router.get('/protected', adminAuth,adminController.protected);
 router.get('/user-details/:id',adminAuth, adminController.getUser);
 router.get('/users',adminAuth, adminController.getAllUsers);
@@ -188,6 +211,7 @@ router.get('/reasons',adminAuth,adminController.getReason);
 router.get('/directory',adminController.getDirectory);
 router.get('/get-seminar',adminController.getSeminar);
 router.get('/daily-quote',adminController.getDailyQuote);
+router.get('/career',adminController.getCareer)
 
 
 router.post('/login', adminController.adminLogin);
@@ -204,7 +228,7 @@ router.post('/add-calender-events',adminAuth, calendarImage.single("image"), adm
 router.post('/sent-notification',adminAuth,OneImage.single("image"), adminController.sentNotificationToAllUsers);
 router.post('/add-directory',adminAuth, adminController.addDirectory);
 router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
-
+router.post('/add-career',adminAuth,careerImage.single("image"), adminController.addCareer);
 router.post('/add-quote',adminAuth, quoteImage.single("photo"), adminController.addDailyQuote);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
@@ -214,7 +238,7 @@ router.delete('/delete-feedback/:id',adminAuth, adminController.deleteFeedback);
 router.delete('/delete-reason/:id',adminAuth, adminController.deleteReason);
 router.delete('/delete-directory/:id',adminAuth, adminController.deleteDirectory);
 router.delete('/delete-seminar/:id',adminAuth, adminController.deleteSeminar);
-
+router.delete('/delete-career/:id',adminAuth, adminController.deleteCareer);
 router.delete('/delete-quote/:id',adminAuth, adminController.deleteDailyQuote);
 
 module.exports = router;

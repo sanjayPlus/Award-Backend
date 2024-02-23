@@ -17,6 +17,7 @@ const Feedback = require("../model/Feedback");
 const Reason = require("../model/Reason");
 const DailyQuote = require("../model/DailyQuote");
 const Seminar = require("../model/Seminar");
+const Career = require('../model/Career');
 const cacheTime = 600
 const adminLogin = async (req, res) => {
     try {
@@ -659,6 +660,49 @@ const addDirectory = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
   }
+  const addCareer =async (req,res)=>{
+    const { jobrole,description,location,package, phone,address} = req.body;
+            req.body.image = req.file;
+            let imgObj = req.body.image;
+    try {
+          const career = await Career.create({
+           jobrole,
+           description,
+           location,
+            package,
+            phone,
+            address, 
+            image: `${process.env.DOMAIN}/careerImage/${imgObj.filename}`,
+          })
+          career.save();
+
+          res.status(200).json(career);
+    } catch (error) {
+        res.status(500).json({error:"internal server error"});
+    }
+  }  
+      const getCareer = async(req,res)=>{
+        try {
+            const career = await Career.find()
+            res.status(200).json(career)
+        } catch (error) {
+            console.error("Error getting career:", error.message);
+          res.status(500).json({ error: "Internal Server Error" });
+        }
+      }
+      const deleteCareer = async(req,res)=>{
+        try {
+            const career = await Career.findByIdAndDelete(req.params.id);
+            if(!career){
+              return res.status(500).json({ error: 'career not found' })
+            }
+            return res.status(200).json({ message: 'career deleted successfully' })
+        } catch (error) {
+            console.error("Error deleting career:", error.message);
+          res.status(500).json({ error: "Internal Server Error" });
+        }
+    
+  }
 
 module.exports = {
     adminLogin,
@@ -697,5 +741,8 @@ module.exports = {
     deleteSeminar,
     addDailyQuote,
     getDailyQuote,
-    deleteDailyQuote   
+    deleteDailyQuote,
+    addCareer, 
+    getCareer,
+    deleteCareer
 }
