@@ -126,7 +126,6 @@ const getAllUsers = async (req, res) => {
                 .skip(skip)
                 .limit(Number(perPage));
         }
-
         res.status(200).json({
             data: users,
             currentPage: page,
@@ -624,14 +623,14 @@ const addDirectory = async (req, res) => {
   const addDailyQuote = async (req, res) => {
     try {
       const { quote, date, href } = req.body;
-      const image = req.file.filename;
+      const image = req.file;
       const dailyQuote = await DailyQuote.create({
         quote,
         date,
         href,
-        image: `${process.env.DOMAIN}/carouselImage/${image.filename}`
+        image: `${process.env.DOMAIN}/quoteImage/${image.filename}`
       });
-      res.status(201).json(dailyQuote);
+      res.status(200).json(dailyQuote);
     }catch(error){
         console.log(error)
         res.status(500).json({ error: "Internal Server Error" });

@@ -172,28 +172,6 @@ const quoteImage = multer({
   },
 });
 
-const quoteStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // destination is used to specify the path of the directory in which the files have to be stored
-    cb(null, "./public/quoteImage");
-  },
-  filename: function (req, file, cb) {
-    // It is the filename that is given to the saved file.
-    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
-    console.log(`${uniqueSuffix}-${file.originalname}`);
-    // console.log(file);
-  },
-});
-
-// Configure storage engine instead of dest object.
-const quoteImage = multer({
-  storage: quoteStorage,
-  limits: {
-    fileSize: 20 * 1024 * 1024, // 20MB in bytes
-  },
-});
-
 
 
 router.get('/protected', adminAuth,adminController.protected);
@@ -227,7 +205,7 @@ router.post('/sent-notification',adminAuth,OneImage.single("image"), adminContro
 router.post('/add-directory',adminAuth, adminController.addDirectory);
 router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
 
-router.post('/add-quote',adminAuth, quoteImage.single("image"), adminController.addDailyQuote);
+router.post('/add-quote',adminAuth, quoteImage.single("photo"), adminController.addDailyQuote);
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);
