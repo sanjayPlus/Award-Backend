@@ -211,6 +211,7 @@ router.get('/reasons',adminAuth,adminController.getReason);
 router.get('/directory',adminController.getDirectory);
 router.get('/get-seminar',adminController.getSeminar);
 router.get('/daily-quote',adminController.getDailyQuote);
+router.get('/quote/:date',adminController.getQuoteWithDate);
 router.get('/career',adminController.getCareer)
 
 
@@ -230,6 +231,7 @@ router.post('/add-directory',adminAuth, adminController.addDirectory);
 router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
 router.post('/add-career',adminAuth,careerImage.single("image"), adminController.addCareer);
 router.post('/add-quote',adminAuth, quoteImage.single("image"), adminController.addDailyQuote);
+
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
 router.delete('/delete-notification/:id',adminAuth, adminController.deleteNotification);

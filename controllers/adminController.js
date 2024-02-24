@@ -648,6 +648,16 @@ const addDirectory = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
   }
+  const getQuoteWithDate = async (req, res) => {
+    try {
+      const dailyQuote = await DailyQuote.find({ date: req.params.date });
+      res.status(200).json(dailyQuote);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
   const deleteDailyQuote = async (req, res) => {
     try {
       const dailyQuote = await DailyQuote.findByIdAndDelete(req.params.id);
@@ -742,6 +752,7 @@ module.exports = {
     deleteSeminar,
     addDailyQuote,
     getDailyQuote,
+    getQuoteWithDate,
     deleteDailyQuote,
     addCareer, 
     getCareer,
