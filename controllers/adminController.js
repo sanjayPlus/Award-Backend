@@ -127,7 +127,6 @@ const getAllUsers = async (req, res) => {
                 .skip(skip)
                 .limit(Number(perPage));
         }
-
         res.status(200).json({
             data: users,
             currentPage: page,
@@ -579,10 +578,10 @@ const addDirectory = async (req, res) => {
 
   const addSeminar = async (req, res) => {
     try {
-      const { subject, description, date, location,  link } = req.body;
+      const { subject, description, date, location,  link, seminarType } = req.body;
     
        let imageObj = req.file;
-      if (!subject || !description || !date || !location || !link) {
+      if (!subject || !description || !date || !location || !link || !seminarType) {
         return res.status(400).json({ error: "Please provide all required fields." });
       }
       const seminar = await Seminar.create({
@@ -591,7 +590,8 @@ const addDirectory = async (req, res) => {
         date,
         location,
         photo: `${process.env.DOMAIN}/seminarImage/${imageObj.filename}`,
-        link
+        link,
+        seminarType
       });
       res.status(201).json(seminar);
     } catch (error) {
@@ -625,14 +625,14 @@ const addDirectory = async (req, res) => {
   const addDailyQuote = async (req, res) => {
     try {
       const { quote, date, href } = req.body;
-      const image = req.file.filename;
+      const image = req.file;
       const dailyQuote = await DailyQuote.create({
         quote,
         date,
         href,
-        image: `${process.env.DOMAIN}/carouselImage/${image.filename}`
+        image: `${process.env.DOMAIN}/quoteImage/${image.filename}`
       });
-      res.status(201).json(dailyQuote);
+      res.status(200).json(dailyQuote);
     }catch(error){
         console.log(error)
         res.status(500).json({ error: "Internal Server Error" });

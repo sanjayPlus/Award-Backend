@@ -230,7 +230,7 @@ router.post('/sent-notification',adminAuth,OneImage.single("image"), adminContro
 router.post('/add-directory',adminAuth, adminController.addDirectory);
 router.post('/add-seminar',adminAuth, seminarImage.single("photo"), adminController.addSeminar);
 router.post('/add-career',adminAuth,careerImage.single("image"), adminController.addCareer);
-router.post('/add-quote',adminAuth, quoteImage.single("image"), adminController.addDailyQuote);
+router.post('/add-quote',adminAuth, quoteImage.single("photo"), adminController.addDailyQuote);
 
 
 router.delete('/delete-user/:id',adminAuth, adminController.deleteUser);
